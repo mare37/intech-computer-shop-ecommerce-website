@@ -16,6 +16,7 @@ export interface User {
     mobile:Number
     password:string
     role:string
+    refreshToken:string
     status:string
     cart:array
    
