@@ -18,6 +18,21 @@ const createToken = (UserPayload:UserPayload) =>{
         const token = jwt.sign(UserPayload, SECRET,{ expiresIn: '1h' } );
 
         return token
+     
+    }
+
+    return false
+}
+
+const createRefreshToken = (UserPayload:UserPayload) =>{
+    console.log("secret length " + SECRET.length);
+    if(SECRET.length !== 0){
+      
+        
+
+        const token = jwt.sign(UserPayload, SECRET,{ expiresIn: '3d' } );
+
+        return token
     }
 
     return false
@@ -36,6 +51,8 @@ const validateToken = async (req:Request,res:Response,next:NextFunction)=>{
 
 
       if(!accessToken){
+        console.log("This is the access token " + accessToken);
+        
            return res.send({loginStatus:false, message:"Login to continue"})
         } else{
 
@@ -66,4 +83,4 @@ const validateToken = async (req:Request,res:Response,next:NextFunction)=>{
 
 }
 
-export {createToken,validateToken}
+export {createToken,createRefreshToken,validateToken}

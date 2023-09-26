@@ -4,6 +4,8 @@ import 'dotenv/config'
 
 const connectDb =  async () =>{
 
+    mongoose
+
     const PASSWORD = process.env.MONGO || '';
 
     try{
@@ -12,7 +14,7 @@ const connectDb =  async () =>{
         
         if(PASSWORD.length !== 0){
 
-            await mongoose.connect(PASSWORD)
+            await mongoose.connect(PASSWORD, )
             console.log("MONGO CONNECTED");    
         }else{
             throw new Error("Password required.Database not connected")
@@ -24,7 +26,7 @@ const connectDb =  async () =>{
 
        
     }catch(err){
-        console.log(err);
+        throw new Error("Error connecting to database")
         
     }
 
