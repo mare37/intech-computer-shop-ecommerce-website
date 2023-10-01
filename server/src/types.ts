@@ -5,9 +5,7 @@ export type array ={
   cart:[]
 }
 
-interface str{
-  status:string
-}
+
 
 export interface User {
     firstName: string
@@ -21,6 +19,29 @@ export interface User {
     cart:array
    
   }
+
+  export interface Product {
+    title:string
+    slug:string
+    description:string
+    price:number
+    sold:number
+    brand:number
+    status:string
+    category:ObjectId
+    quantity:number
+    images?: Array<string>
+    color:string
+    ratings:[]
+
+
+
+   
+   
+  }
+
+
+
 
 export interface UserPayload{
   email:string

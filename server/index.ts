@@ -1,45 +1,34 @@
-import express from "express"
+import express from "express";
 const app = express();
-import dotenv from 'dotenv';
-import cookieParser from "cookie-parser"
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import morgan from "morgan"
 import connectDb from "./src/config/database";
-import  notFound  from "./src/middlewares/errorhandler"
+import notFound from "./src/middlewares/errorhandler";
 
+import userRoute from "./src/routes/userRoute";
+import productRoute from "./src/routes/productRoute"
 
-import userRoute from "./src/routes/userRoute"
- 
-
-
-dotenv.config()
+dotenv.config();   
 const port = process.env.PORT || 9000;  
 
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
+app.use(morgan('dev'));
 
+app.use("/", userRoute);
+app.use("/product", productRoute)
 
-app.use("/", userRoute)
- 
-app.get("/",(req,res)=>{   
+app.get("/", (req, res) => {
+  console.log("hellkj");
 
-    console.log("hellkj");
-     
+  res.send("success again");
+});
 
-    res.send("success again");
- 
+app.use(notFound);
 
-})
-
-
-app.use(notFound)
-
-
-app.listen(port, async ()=>{
-     console.log("Connecting to mongo...");
-     await connectDb();
-     console.log(`Listening on port ${port}`);
-    
-})
-
-
-
-
+app.listen(port, async () => {
+  console.log("Connecting to mongo...");
+  await connectDb();
+  console.log(`Listening on port ${port}`);
+});
