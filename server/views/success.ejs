@@ -1,0 +1,23 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/index.css" type="text/css" />
+    <title>Reset Password</title>
+  </head>
+  <body id="login">
+ 
+      <div class="login-container">
+        <h1>YOU HAVE SUCCESSFULLY CHANGED YOUR PASSWORD</h1>
+        <button id="login-button">Log In</button>
+      </div>
+    
+
+    <script>
+      document.getElementById("login-button").onclick = function () {
+        location.href = "http://localhost:3000/login";
+      };
+    </script>
+  </body>
+</html>
