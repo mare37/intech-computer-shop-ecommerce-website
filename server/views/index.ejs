@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/index.css" type="text/css" />
+    <title>Reset Password</title>
+  </head>
+  <body id="login">
+   
+      <form method="POST"  action="http://localhost:7000/resetpassword"   class="login-container">
+
+       
+        <% if(typeof errors !== 'undefined'){%>
+          <h3 class="errors">
+            Invalid! Password should be at least four characters
+          </h3
+        <% } %>
+                  
+          <% if(typeof notMatch !== 'undefined'){%>
+            <h3 class="errors">
+              Passwords Don't Match
+            </h3
+          <% } %>
+          <h1><%=email%></h1>
+
+          <input
+          name="email"
+          value="<%= email %>"
+          type="text"
+        /> 
+        <input
+          name="password"
+          type="password"
+          placeholder="Enter New Password"
+        />
+        <input
+          name="confirmpassword"
+          type="password"
+          placeholder="Confirm Password"
+        />
+        <button type="submit">
+            Submit
+          
+          </button>
+      </form>
+   
+  </body>
+
+  
+</html>

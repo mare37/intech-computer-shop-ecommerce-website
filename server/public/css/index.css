@@ -1,0 +1,86 @@
+#login {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 200px;
+  }
+  
+  #login::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+  
+    opacity: 0.7;
+    z-index: -1;
+  }
+  
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 8px;
+    height: 400px;
+    width: 300px;
+    background-color: white;
+    position: absolute;
+  }
+  
+  .login-container button {
+    margin-top: 30px;
+    padding: 10px 0;
+    background-color: rgb(54, 54, 240);
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .login-container button:hover {
+    background-color: blue;
+  }
+  
+  .login-container p {
+    margin-bottom: 40px;
+    font-weight: 700;
+    font-size: 28px;
+  }
+  
+  .login-container input {
+    margin-top: 20px;
+    border: none;
+    border-bottom: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: grey;
+    height: 30px;
+    outline: none;
+  }
+  
+  .login-forgotpassword {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    cursor: pointer;
+    margin-top: 30px;
+  }
+  .login-forgotpassword:hover {
+    color: blue;
+  }
+  
+  .login-error {
+    color: red;
+    font-size: 14px;
+  }
+  
+  .reaptcha {
+    background-color: red;
+    height: 50px;
+    margin-top: 10px;
+  }
+  

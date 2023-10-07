@@ -56,7 +56,14 @@ const userSchema = new Schema<User>({
     cart:{
       //default:[],
       type:Array
+    },
+    passwordChangedAt:Date,
+    passwordResetExpires: Date,
+    passwordResetToken:{
+      default:'',
+      type:String
     }
+    
 
 
 
