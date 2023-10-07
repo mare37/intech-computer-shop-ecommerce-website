@@ -4,11 +4,11 @@ import userModel from "../models/userModel";
 
 const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 
-    console.log("Now we are in admin " +  req.user);
+    console.log("Now we are in admin " +  req?.user);
 
 
     try{
-        const User = await userModel.find({email:req.user})
+        const User = await userModel.find({_id:req.user})
 
         console.log(User);
 

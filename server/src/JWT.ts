@@ -42,9 +42,11 @@ const createRefreshToken = (UserPayload:UserPayload) =>{
 const validateToken = async (req:Request,res:Response,next:NextFunction)=>{
 
 
+    try{
+        
     const accessToken =  req.cookies['access_token']
 
-    console.log(accessToken);
+    
     
 
     if(SECRET.length !== 0){
@@ -58,14 +60,17 @@ const validateToken = async (req:Request,res:Response,next:NextFunction)=>{
 
              jwt.verify(accessToken, SECRET, async function(err:any, decoded:any) {
 
-                if(err) throw new Error(err);
+                if(err) {
+
+                    return res.send({loginStatus:false, message:"Login to continue",error:err,})
+                }
     
                 console.log(decoded)
 
                 const User = await userModel.findById({_id:decoded.id})
 
-                console.log("This object     " +    User?.email);
-                req.user =  User?.email
+               // console.log("This object     " +    User?.email);
+                req.user =  User?._id.toString() 
                 
     
                 next()
@@ -78,6 +83,18 @@ const validateToken = async (req:Request,res:Response,next:NextFunction)=>{
 
     }
     
+
+    }catch(err){
+
+       console.log(err);
+       
+        return res.send({loginStatus:false, error:err})
+
+
+
+    }
+
+
    
 
 
