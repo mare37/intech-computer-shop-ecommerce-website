@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import userModel from "../models/userModel";
+import cartModel from "../models/cartModel";
+import productModel from "../models/productModel";
 import { createToken, createRefreshToken } from "../JWT";
 import jwt from "jsonwebtoken";
 
@@ -128,13 +130,13 @@ export const login = async (req: Request, res: Response) => {
         );
 
         res.cookie("access_token", accessToken, {
-          maxAge: 60 * 60 * 60 * 60 * 60,
+          maxAge:  60 * 60 * 60 * 60 * 60 * 60 * 60 * 60 ,
           httpOnly: true,
           secure: true,
         });
 
         res.cookie("refresh_token", refreshToken, {
-          maxAge: 60 * 60 * 60 * 60 * 60 * 60 * 60,
+          maxAge: 60 * 60 * 60 * 60 * 60 * 60 * 60 * 60,
           httpOnly: true,
           secure: true,
         });
@@ -232,7 +234,7 @@ export const refresh = async (req: Request, res: Response) => {
         );
 
         res.cookie("access_token", accessToken, {
-          maxAge: 60 * 60,
+          maxAge: 60 ,
           httpOnly: true,
           secure: true,
         });
@@ -638,5 +640,92 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 };
 
-//export const changePassword = (req:Request, res:Response) =>{}
 
+
+
+export const useCart = async (req: Request, res: Response) => {
+
+  const { cart, id } = req.body; 
+
+  console.log(cart);
+  
+
+  try {
+
+    let products = [];
+    const user = await userModel.findById(id);
+
+
+     // check if user already have product in cart
+     const alreadyExistCart = await cartModel.findOne({ orderby: user._id });
+     if (alreadyExistCart) {
+      const remove = await cartModel.findOneAndDelete({ orderby: user._id });
+     }
+
+
+
+     for (let i = 0; i < cart.length; i++) {
+      let object : any= {};
+
+      object.productId  = cart[i]._id;
+      object.count = cart[i].count;
+      object.color = cart[i].color;
+      let getPrice = await productModel.findById(cart[i].productId).select("price").exec();
+      object.price = getPrice.price;
+      products.push(object);
+    }
+
+
+    let cartTotal = 0;
+    for (let i = 0; i < products.length; i++) {
+      cartTotal = cartTotal + products[i].price * products[i].count;
+    }
+
+
+    let newCart = await new cartModel({
+      products,
+      cartTotal,
+      orderby: user?._id,
+    }).save();
+    
+
+
+    res.send({cartUpdated: true, result: newCart });
+  } catch (error) {
+    console.log(error);
+    
+    res.send({cartUpdated: false, error: error });
+  }
+};
+
+
+
+export const deleteCart = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  console.log(id);
+  
+
+  try {
+    const result = await cartModel.findOneAndRemove(
+      { orderby: id },
+    );
+    res.send({cartnDeleted: true, result: result }); 
+  } catch (error) {
+    res.send({cartDeleted: false, error: error });
+  }
+};
+
+
+
+
+export const getOneCart = async (req: Request, res: Response) => {
+  const { orderby } = req.params;
+
+  try {
+    const result = await cartModel.findOne({ orderby: orderby }).populate("products.product")
+    res.send({ result: result });
+  } catch (error) {
+    res.send({ error: error });
+  }
+};

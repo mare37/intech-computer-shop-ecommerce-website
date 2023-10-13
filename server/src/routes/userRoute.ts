@@ -19,6 +19,9 @@ import {
   forgotpassword,
   renderChangePasswordPage,
   resetPassword,
+  useCart,
+  deleteCart,
+  getOneCart
 } from "../controllers/userController";
 //import notFound
 
@@ -47,5 +50,8 @@ router.delete("/getoneuser/:id", deleteOneuser);
 router.put("/updateuser/:id", updateUser);
 router.get("/refresh", refresh);
 router.get("/logout", validateToken, logOut);
+router.post("/cart", useCart);
+router.delete("/empty-cart/:id", deleteCart);
+router.get("/:orderby", validateToken,  getOneCart);
 
 export default router;
