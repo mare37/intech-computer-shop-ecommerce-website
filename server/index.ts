@@ -15,6 +15,8 @@ import brandRoute from "./src/routes/brandRoute"
 import colourRoute from "./src/routes/colourRoute"
 import blogCatRoute from "./src/routes/blogCatRoute"
 import enquiryRoute from "./src/routes/enquiryRoute"
+import couponRoute from "./src/routes/couponRoute"
+import cartRoute from "./src/routes/cartRoute"
 
 dotenv.config();   
 const port = process.env.PORT || 9000;  
@@ -34,10 +36,12 @@ app.use("/brand", brandRoute)
 app.use("/colour", colourRoute)   
 app.use("/blog-category", blogCatRoute)   
 app.use("/enquiry", enquiryRoute)   
+app.use("/coupon", couponRoute)   
+app.use("/cart", cartRoute)   
 
 
 app.get("/", (req, res) => {
-  console.log("hellkj");
+ 
 
   res.send("success again");
 });

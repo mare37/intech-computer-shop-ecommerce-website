@@ -75,8 +75,22 @@ export interface Enquiry {
   email: string;
   mobile: string;
   comment: string;
-  enquiryStatus:string
+  enquiryStatus: string;
   status: string;
+}
+
+export interface Coupon {
+  name: string;
+  expiry: Date;
+  discount: number;
+  status: string;
+}
+
+export interface Cart {
+  products: [];
+  cartTotal: number;
+  totalAfterDiscount: number;
+  orderby: ObjectId
 }
 
 export interface UserPayload {
