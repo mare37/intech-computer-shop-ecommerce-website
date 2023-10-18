@@ -14,6 +14,7 @@ export interface User {
   refreshToken: string;
   status: string;
   cart: array;
+  wishlist:[]
   passwordChangedAt: Date;
   passwordResetExpires: Date;
   passwordResetToken: String;
@@ -32,6 +33,7 @@ export interface Product {
   images?: Array<string>;
   color: string;
   ratings: [];
+  totalRating:Number
 }
 
 export interface Blog {
