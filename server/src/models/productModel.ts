@@ -4,74 +4,71 @@ import { ObjectId } from "mongoose";
 import { Schema } from "mongoose";
 import { Product } from "../types";
 
-
-
-const productSchema = new Schema<Product>({
-
-    title:{
-        type:String,
-        required:true,
-        trim:true
+const productSchema = new Schema<Product>(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    slug:{
-        type:String,
-        unique:true,
-        lowercase:true,
-        required:true
+    slug: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      required: true,
     },
-    description:{
-        type:String,
-        required:true
+    description: {
+      type: String,
+      required: true,
     },
-    price:{
-        type:Number,
-        required:true
+    price: {
+      type: Number,
+      required: true,
     },
 
-    sold:{
-        type:Number,
-        default:0,
-        select:false
+    sold: {
+      type: Number,
+      default: 0,
+      select: false,
     },
 
-    brand:{
-        type:Number,
-        enum: ["Lenovo", "Samsung"]
+    brand: {
+      type: Number,
+      enum: ["Lenovo", "Samsung"],
     },
-    status:{
-        default: 'Active',
-        type:String, 
-        required:true,
-        select:false
-      },
+    status: {
+      default: "Active",
+      type: String,
+      required: true,
+      select: false,
+    },
 
-
-    category:{
-        type:mongoose.Schema.ObjectId,
-        ref: "Category"
-        
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Category",
     },
     quantity: Number,
-    images:{
-        type:Array,
-    },
-  
+    images: [],
 
-    color:{
-        type:String,
-        enum: ["black","white","red"]
+    color: {
+      type: String,
+      enum: ["black", "white", "red"],
     },
 
-    ratings:[
-        {
-            star:Number,
-            postedBy: {type: mongoose.Schema.ObjectId,ref: "User" }
-        }
-    ]
+    ratings: [
+      {
+        star: Number,
+        postedBy: { type: mongoose.Schema.ObjectId, ref: "User" },
+        comment: String,
+      },
+    ],
 
-      
+    totalRating: {
+      type: Number,
+    },
+  },
+  { timestamps: true }
+);
 
-},{timestamps:true})
-
-
-export default  mongoose.models.Product || mongoose.model("Product", productSchema );
+export default mongoose.models.Product ||
+  mongoose.model("Product", productSchema);
