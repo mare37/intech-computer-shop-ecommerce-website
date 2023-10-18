@@ -57,6 +57,13 @@ const userSchema = new Schema<User>({
       //default:[],
       type:Array
     },
+    wishlist:[
+      {
+          
+          product: {type: mongoose.Schema.ObjectId,ref: "Product" },
+         
+      }
+  ],
     passwordChangedAt:Date,
     passwordResetExpires: Date,
     passwordResetToken:{

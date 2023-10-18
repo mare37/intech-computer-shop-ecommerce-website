@@ -21,7 +21,12 @@ import {
   resetPassword,
   useCart,
   deleteCart,
-  getOneCart
+  getOneCart,
+  createOrder,
+  getOrders,
+  getMyOrders,
+  addToWishList,
+  applyCoupon
 } from "../controllers/userController";
 //import notFound
 
@@ -52,6 +57,12 @@ router.get("/refresh", refresh);
 router.get("/logout", validateToken, logOut);
 router.post("/cart", useCart);
 router.delete("/empty-cart/:id", deleteCart);
-router.get("/:orderby", validateToken,  getOneCart);
+router.get("/cart/:id", validateToken,  getOneCart);
+router.post("/create-order", validateToken, createOrder)
+router.get("/orders",validateToken,isAdmin, getOrders )
+router.get("/orders/:userId",validateToken,getMyOrders )
+router.post("/wishlist", validateToken, addToWishList);
+router.post("/applycoupon", validateToken, applyCoupon);
+
 
 export default router;
