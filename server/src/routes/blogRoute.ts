@@ -1,12 +1,8 @@
 import express from "express";
 const router = express.Router();
 import { validateToken } from "../JWT";
-import multer from "multer"
 import isAdmin from "../middlewares/isAdmin";
-
-
-const upload = multer({ dest: 'uploads/' })
-
+import { upload, blogImgResize } from "../middlewares/upload";
 
 import {
   createBlog,
@@ -16,18 +12,25 @@ import {
   getAllBlogs,
   likeBlog,
   dislikeBlog,
-  uploadPhoto
+  uploadPhoto,
 } from "../controllers/blogController";
 
+router.use(express.static("./public"));
 
-router.post("/",validateToken, createBlog);
-router.delete("/:id",validateToken, deleteBlog);
-router.put("/:id",validateToken, updateBlog);
+router.post("/", validateToken, isAdmin, createBlog);
+router.delete("/:id", validateToken, isAdmin, deleteBlog);
+router.put("/:id", validateToken, isAdmin, updateBlog);
 router.get("/:id", getOneBlog);
 router.get("/", getAllBlogs);
-router.put("/like/:blogId",validateToken, likeBlog);
-router.put("/dislike/:blogId",validateToken, dislikeBlog);
-router.post("/uploadblogphoto", validateToken,upload.single('image'),uploadPhoto )
-
+router.put("/like/:blogId", validateToken, likeBlog);
+router.put("/dislike/:blogId", validateToken, dislikeBlog);
+router.post(
+  "/uploadblogphoto",
+  validateToken,
+  isAdmin,
+  upload.array("images"),
+  blogImgResize,
+  uploadPhoto
+);
 
 export default router;

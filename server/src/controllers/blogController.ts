@@ -89,14 +89,13 @@ export const getOneBlog = async (req: Request, res: Response) => {
       { _id: id },
       { $inc: { numViews: 1 } }
     );
-    const blog = await blogModel.findById({ _id: id })
+    const blog = await blogModel.findById({ _id: id });
 
-  return  res.send({
+    return res.send({
       blog,
     });
   } catch (error) {
     console.log(error);
-    
   }
 };
 
@@ -139,7 +138,7 @@ export const likeBlog = async (req: Request, res: Response) => {
       dislikes: { $in: [userLoggedInId?.toString()] },
     });
 
-    console.log(isAlreadyDisLiked);  
+    console.log(isAlreadyDisLiked);
 
     if (isAlreadyDisLiked === 1) {
       //if user previously had not disliked, push user to likes array immediately
@@ -152,7 +151,7 @@ export const likeBlog = async (req: Request, res: Response) => {
         { new: true }
       );
 
-     return  res.send(blog);
+      return res.send(blog);
     }
 
     if (!isLiked) {
@@ -164,11 +163,11 @@ export const likeBlog = async (req: Request, res: Response) => {
         },
         { new: true }
       );
-    return  res.json(blog);
+      return res.json(blog);
     }
 
     if (isLiked) {
-      const blog = await blogModel.findByIdAndUpdate( 
+      const blog = await blogModel.findByIdAndUpdate(
         blogId,
         {
           $pull: { likes: userLoggedInId },
@@ -176,104 +175,124 @@ export const likeBlog = async (req: Request, res: Response) => {
         },
         { new: true }
       );
-   return   res.json(blog);
+      return res.json(blog);
     }
   } catch (error) {
     res.send({ error: error });
   }
 };
 
-
-
 export const dislikeBlog = async (req: Request, res: Response) => {
-    const { blogId } = req.params;
-  
-    console.log("blogid  " + blogId);
-  
-    try {
-      const userLoggedInId = req?.user;
-  
-      console.log(userLoggedInId);
-  
-      //Find the blog that user wants to dislike
-      const blog = await blogModel.findById({ _id: blogId });
-  
-      //Find out id blog is already liked
-      const isDisliked = blog.isDisliked;
-  
-      console.log(isDisliked);
-  
-      const isAlreadyLiked = await blogModel.count({
-        _id: blogId,
-        likes: { $in: [userLoggedInId?.toString()] },
-      });
-  
-      console.log( "HAS ALREADY LIKED? "+ isAlreadyLiked );
-  
-      if ( isAlreadyLiked === 1) {
-        //if user previously had not disliked, push user to likes array immediately
-        const blog = await blogModel.findByIdAndUpdate(
-          { _id: blogId },
-          {
-            $pull: { likes: userLoggedInId },
-            isLiked: false,
-          },
-          { new: true }
-        );
-  
-       return res.send(blog);
-      }
-  
-      if (!isDisliked) {  
-     
-      }
-  
-      if ( isDisliked) {
-        const blog = await blogModel.findByIdAndUpdate(
-          blogId,
-          {
-            $pull: { dislikes: userLoggedInId },
-            isDisliked: false,
-          },
-          { new: true }
-        );
-        res.json(blog);
-      }else{
-        const blog = await blogModel.findByIdAndUpdate(
-            blogId,
-            {
-              $push: { dislikes: userLoggedInId },
-              isDisliked: true,
-            },
-            { new: true } 
-          );
-          res.json(blog); 
+  const { blogId } = req.params;
 
+  console.log("blogid  " + blogId);
 
-      }
+  try {
+    const userLoggedInId = req?.user;
 
+    console.log(userLoggedInId);
 
-    } catch (error) {
-      //res.send({ error: error });
+    //Find the blog that user wants to dislike
+    const blog = await blogModel.findById({ _id: blogId });
+
+    //Find out id blog is already liked
+    const isDisliked = blog.isDisliked;
+
+    console.log(isDisliked);
+
+    const isAlreadyLiked = await blogModel.count({
+      _id: blogId,
+      likes: { $in: [userLoggedInId?.toString()] },
+    });
+
+    console.log("HAS ALREADY LIKED? " + isAlreadyLiked);
+
+    if (isAlreadyLiked === 1) {
+      //if user previously had not disliked, push user to likes array immediately
+      const blog = await blogModel.findByIdAndUpdate(
+        { _id: blogId },
+        {
+          $pull: { likes: userLoggedInId },
+          isLiked: false,
+        },
+        { new: true }
+      );
+
+      return res.send(blog);
     }
-  };
+
+    if (!isDisliked) {
+    }
+
+    if (isDisliked) {
+      const blog = await blogModel.findByIdAndUpdate(
+        blogId,
+        {
+          $pull: { dislikes: userLoggedInId },
+          isDisliked: false,
+        },
+        { new: true }
+      );
+      res.json(blog);
+    } else {
+      const blog = await blogModel.findByIdAndUpdate(
+        blogId,
+        {
+          $push: { dislikes: userLoggedInId },
+          isDisliked: true,
+        },
+        { new: true }
+      );
+      res.json(blog);
+    }
+  } catch (error) {
+    //res.send({ error: error });
+  }
+};
+
+export const uploadPhoto = async (req: any, res: Response) => {
 
 
-  export const uploadPhoto = (req:any,res:Response)=>{
 
-    if (!req.file) {
+  try {
 
-        console.log("No upload");
-       
+    if (!req.files) {
+      console.log("No upload");
+  
+      res.send("No upload");
+    }
+  
+    const { blogId } = req.body;
+  
+    console.log(blogId);
+  
+    let result
     
-        res.send("No upload");
-      }
+    req.files.forEach(async (item:any)=>{
+       result = await blogModel.findByIdAndUpdate(
+        { _id: blogId },
+        {
+          $push: { images: item.filename },
+        },
+        { new: true }
+      );
+  
+      console.log(result);
+      
+    })
+  
+  
 
-      res.send({fileName: req.file.filename })
+  
+    res.send({ filesUploaded:true});
+    
+  } catch (error) {
 
-
-
+    res.send({filesUploaded:false,error:error})
+    
   }
 
 
+
   
+};
