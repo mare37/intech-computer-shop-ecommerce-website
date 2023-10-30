@@ -1,0 +1,296 @@
+@mixin flexbox1 {
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    }
+
+    @mixin flexbox2 {
+        display: flex;
+        flex-direction: row;
+        align-items:center;
+        }
+
+$myColor: #001529;
+
+
+
+
+
+.sidebar{
+    
+    flex-direction: column;
+   
+    left: 0%;
+
+    
+    
+    width: 70%;
+   background-color:$myColor;
+   z-index: 5;
+   position:fixed;
+
+   height: 100vh;
+   overflow-y: scroll;
+   overflow-x: hidden;
+   
+   
+  
+   
+
+  
+
+
+}
+
+.heading{
+   height:50px;
+    @include flexbox1;
+    justify-content: center;
+    color: white;
+    font-size: 25px;
+    width: 100%;
+    
+}
+
+.body{
+    margin-top: 30px;
+    width: 100%;
+    
+    section{  
+        @include flexbox2;
+        height: 30px;
+
+        width: 100%;
+        padding: 15px   27px;
+        color: rgb(204, 192, 192);
+        font-size: 19px;
+
+        vertical-align: top;
+
+
+        p{
+            margin-left: 15px;
+        }
+
+        .arrow{
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+    }
+    
+}
+
+
+.expandMenu{
+    display: flex;
+    flex-direction: column;
+    padding: 0 20%;
+    background-color: #000c17;
+   
+   
+    p{
+        color: white;
+    }
+
+   
+}
+
+.contractMenu{
+  
+    p{
+        display: none;
+
+     
+    }
+}
+
+
+
+
+
+
+.removeSidebar{
+    position: absolute;
+   /* left: 100%; */
+
+ 
+    display: flex;
+    flex-direction: column;
+    width: 0%;
+    background-color:$myColor;
+    z-index: 5;
+
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+   
+  
+
+
+  /*  -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -ms-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;*/
+
+
+    .heading{
+        visibility: hidden;
+    }
+
+   section{
+    visibility: hidden;
+
+   
+   }
+
+   
+
+}
+
+
+.sidebar::-webkit-scrollbar-track{
+        
+    width: 1px;
+    height: 8px;
+    background-color: red;
+    }
+
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background-color: blue;    /* color of the scroll thumb */
+        border-radius: 20px;       /* roundness of the scroll thumb */
+        border: 3px solid orange;  /* creates padding around scroll thumb */
+      }
+
+
+
+.sidebar-link{
+
+    margin-bottom: 40px;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.sidebar-link.active{
+    border-bottom: solid;
+    border-bottom-color: white;
+    padding: 2px 0;
+   
+}
+
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+
+.sidebar div  p  a:hover{
+    border-bottom: solid;
+    border-bottom-color: white;
+    padding: 2px 0;
+
+
+}
+
+
+
+
+
+
+
+@media (min-width: 768px){
+
+    .sidebar {
+
+        width: 40%;
+
+       
+       
+    }
+
+    .heading{
+
+       margin-top: 30px;
+    }
+
+   
+} 
+
+
+@media (min-width: 1024px){
+
+    .sidebar{
+
+        
+        width: 20%;
+    }
+
+
+
+   
+        
+   
+
+     .removeSidebar{
+        width: 17%;
+
+        
+
+
+        .heading{
+            height:25px;
+            align-items: start;
+            padding-left: 20px;
+            
+             font-size: 20px;
+             visibility:visible;
+             
+         }
+
+         section{
+            visibility: visible;
+        
+           
+           }
+
+         
+     }
+
+   
+
+ 
+
+     .body{
+        section{
+
+            p{
+                 font-size: 15px;
+            }
+        }
+     }
+
+
+
+     .expandMenu{
+        display: flex;
+        flex-direction: column;
+        padding: 0 20%;
+        background-color: #000c17;
+        max-height: 500px;
+        
+       
+        p{
+            color: white;
+        }
+    
+       
+    }
+        
+        
+
+  
+
+}

@@ -1,0 +1,328 @@
+@mixin flexbox1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items:center;
+    }
+
+
+
+
+
+
+
+#navbar{
+    position: fixed;
+    width: 100vw;
+    background-color: transparent;
+   
+   
+}
+
+
+
+
+.nav{
+
+    height: 90px;
+    display: flex;
+    flex-direction: row;
+   /* box-shadow: 0 4px 8px 0 rgba(207, 203, 203, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+   
+   
+   /* background-color: rgb(220, 202, 237);*/
+    
+}
+
+
+
+.logo{
+    color:rgb(147, 147, 46);
+    font-size:34px;
+    font-weight: 700;
+}
+
+.navbarlinks{ 
+    @include flexbox1;
+    background-color:transparent;
+    width: 100%;
+    padding: 15px;
+
+    .menu{
+
+        height: 40px;
+        width: 40px;
+    }
+}
+
+.innerContainer{
+    @include flexbox1;
+
+    img{
+        width: 40px;
+        height:100%;
+        margin: 0px  10px;
+    }
+
+    
+
+    .notification{ 
+
+        height: 30px;
+        width: 30px;
+       
+    }
+
+    .email{
+        visibility: hidden;
+        font-size: 2px;
+    }
+
+
+    
+}
+
+.cancelButton{
+
+    position: absolute;
+    top:50%;
+    height: 30px;
+    width: 30px;
+}
+
+.removeCancelButton{
+    display: none;
+}
+
+.navbar-links.home{
+    background-color: transparent;
+}
+
+.navbar-links-inner{
+   
+    width: 100vw;
+    height: 100vh;
+    top: 70px;
+    background-color: rgb(246, 244, 237);
+    display: flex;
+    flex-direction: column;
+    left: 0px;
+    padding: 20px;
+    position:absolute;
+    
+
+}
+
+.navbar-links-inner.removemenu{
+
+    left: 100%;
+}
+
+
+.navbar-links-inner button {
+
+    
+}
+
+.navbar-donate-now{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.navbar-donate-now button{
+
+    width: 100%;
+    padding: 9px;
+    border-radius: 20px;
+    background-color: rgb(150, 150, 201);
+    color:  rgb(246, 244, 237);
+    font-weight: 700;
+    border: none;
+}
+
+.navbar-links-inner p {
+    
+}
+
+.navbarlink{
+    margin-bottom: 20px;
+    color: black;
+    font-size: 25px;
+
+
+}
+
+.navbarlink:hover{
+    border-bottom: solid;
+    
+
+
+}
+
+
+.navbar-links img{
+    height: 50px;
+}
+
+
+@media (min-width: 768px){
+    .cancelButton{
+        height: 40px;
+        width: 40px;
+    }
+
+
+}
+
+
+
+
+@media (min-width: 1024px) {
+
+
+    #navbar{
+
+       display: flex;
+       flex-direction: row;
+       justify-content: flex-end;
+    }
+
+    .nav{
+
+    
+       width: 83vw;
+       height: 70px;
+       
+    }
+
+    .menu{
+
+       visibility: hidden;
+    }
+
+
+    .innerContainer{
+        
+       padding-right: 30px;
+
+
+       img{
+        margin-right: 20px;
+    }
+
+    
+
+    .notification{ 
+
+       margin-right: 20px;
+       
+    }
+
+       .name{
+        font-size: 12px;
+       }
+
+       .email{
+        visibility: visible;
+        font-size: 13px;
+       }
+
+       .textContainer{
+          
+       }
+    }
+
+    .navbar.scroll{
+
+        background-color:rgb(253, 248, 233);
+        height: 90px;
+        box-shadow:0 2px 4px 0 rgba(207, 203, 203, 0.2), 0 6px 20px 0 rgba(177, 177, 177, 0.19) ;
+
+    
+    }
+
+
+
+    .navbar-links-inner{
+   
+     
+       
+      
+        
+    
+    }
+
+
+    .navbar-links-inner{
+
+        display: flex;
+        flex-direction: row;
+        justify-content:center;
+   position: initial;
+       height: 100%;
+       background-color:transparent;
+       padding: 9px;
+       align-items: baseline;
+      
+      
+
+        
+    
+    }
+
+
+    .navbar-donate-now{
+      
+    }
+
+    .navbar-links img{
+        display: none;
+    }
+
+
+  
+
+    .navbarlink{
+       
+        font-size: 15px;
+        margin-right:35px;
+        color: white;
+        font-weight: 700;
+    
+    
+    }
+
+    .navbarlink.scroll{
+       
+        color: black;
+    
+    
+    }
+
+
+    .navbar-donate-now{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        margin-right: 55px;
+    }
+    
+    .navbar-donate-now button{
+    
+        width: 200px;
+        padding: 12px;
+        border-radius: 20px;
+        background-color: #335f68    ;
+        color:  rgb(246, 244, 237);
+        font-weight: 700;
+        border: none;
+    }
+    
+
+  
+}
