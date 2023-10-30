@@ -1,15 +1,45 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { Provider } from "react-redux";
+import { store } from "./store";
+import MainLayout from "./Layout/MainLayout";
+import AddBrand from "./pages/brand/addbrand";
+import AddColour from "./pages/colour/addcolor";
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
+
+const router = createBrowserRouter([
+  {
+    path: "/admin",
+    element: <MainLayout/>,
+    children: [
+      {
+        path: "addbrand",
+        element: < AddBrand />,
+      },
+      {
+        path: "addcolor",
+        element: < AddColour />,
+      },
+    ]
+  },
+]);
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+    <RouterProvider router={router} />
+      <App />
+    </Provider>
   </React.StrictMode>
 );
 
