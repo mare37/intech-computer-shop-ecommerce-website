@@ -12,7 +12,7 @@ import { VscTriangleDown } from "react-icons/vsc";
 
 import { useAppSelector, useAppDispatch } from "../../hooks";
 
-import { setSiderBar,setSiderBarToFalse } from "../../features/sidebarSlice";
+import { setSiderBar, setSiderBarToFalse } from "../../features/sidebarSlice";
 import { useState } from "react";
 
 function Sidebar() {
@@ -34,10 +34,10 @@ function Sidebar() {
 
         <div className={styles.body}>
           <section>
-            <AiOutlineDashboard /> <p>Dashboard</p>
+            <AiOutlineDashboard /> <p><Link to="dashboard">Dashboard</Link></p>
           </section>
           <section>
-            <BsFillPersonFill /> <p>Customers</p>
+            <BsFillPersonFill /> <p> <Link to="customers">Customers</Link></p>
           </section>
           <section>
             <SlOptions /> <p>Options</p>{" "}
@@ -51,21 +51,44 @@ function Sidebar() {
             />
           </section>
 
-          <div   onClick={() => {
-                  console.log(sidebar);
-                  dispatch(setSiderBarToFalse());
-                }}       className={expandMenu ? styles.expandMenu : styles.contractMenu}>
-            <p>Add product</p>
+          <div
+            onClick={() => {
+              console.log(sidebar);
+              dispatch(setSiderBarToFalse());
+            }}
+            className={expandMenu ? styles.expandMenu : styles.contractMenu}
+          >
+            <p>
+              <Link to="addproduct">Add product</Link>
+            </p>
             <p>Products List</p>
-            <p> <Link to="addbrand">Add brand</Link>   </p>
-            <p>Brands list</p>
-            <p>Add Category</p>
-            <p>Categories list</p>
-            <p><Link to="addcolor">Add color</Link> </p>
-            <p>Colours list</p>
+            <p>
+              {" "}
+              <Link to="addbrand">Add brand</Link>
+            </p>
+            <p>
+              {" "}
+              <Link to="brandlist">Brand list</Link>{" "}
+            </p>
+            <p>
+              <Link to="productcategory">Add product category</Link>
+            </p>
+            <p>
+              {" "}
+              <Link to="productcategorylist">Categories list</Link>
+            </p>
+            <p>
+              <Link to="addcolor">Add color</Link>
+            </p>
+            <p>
+              <Link to="colourlist">Colour list</Link>
+            </p>
           </div>
           <section>
-            <GoListOrdered /> <p>Orders</p>
+            <GoListOrdered />{" "}
+            <p>
+              <Link to="orders">Orders</Link>
+            </p>
           </section>
           <section>
             <SiCoinmarketcap /> <p>Marketing</p>
@@ -83,8 +106,13 @@ function Sidebar() {
               expandMarketingMenu ? styles.expandMenu : styles.contractMenu
             }
           >
-            <p>Add Coupon</p>
-            <p>Coupon List</p>
+            <p>
+              <Link to="addcoupon">Add coupon</Link>
+            </p>
+
+            <p>
+              <Link to="couponlist">Coupon list</Link>
+            </p>
           </div>
           <section>
             <FaBloggerB /> <p>Blog</p>{" "}
@@ -100,13 +128,24 @@ function Sidebar() {
           <div
             className={expandBlogMenu ? styles.expandMenu : styles.contractMenu}
           >
-            <p>Write a blog</p>
-            <p>Blogs list</p>
-            <p>Add a blog Category</p>
-            <p>Blog Category List</p>
+            <p>
+              {" "}
+              <Link to="writeblog">Write a blog</Link>
+            </p>
+            <p>
+              <Link to="bloglist">Blog list</Link>
+            </p>
+            <p>
+              {" "}
+              <Link to="addblogcategory">Add a blog category</Link>
+            </p>
+            <p>
+              <Link to="blogcategorylist">Blog category list</Link>
+            </p>
           </div>
+         
           <section>
-            <BiMessageRounded /> <p>Enquiries</p>
+            <BiMessageRounded /> <p><Link to="enquiries">Enquiries</Link></p>
           </section>
         </div>
       </div>
