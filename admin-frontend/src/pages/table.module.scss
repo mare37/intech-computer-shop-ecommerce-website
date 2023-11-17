@@ -1,0 +1,89 @@
+
+.table{
+   
+
+  
+  
+    padding: 29px 10%
+ 
+
+}
+
+
+
+
+
+
+
+.headerContainer{
+
+   
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+
+    background-color:rgb(255, 255, 255);
+    margin-bottom: 1px;
+    
+   
+    
+}
+.dataContainer{
+
+   
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    background-color:white;
+
+    margin-bottom: 1px;
+   
+   
+    
+}
+
+.dataContainer:hover{
+    background-color:rgb(247, 247, 247)
+}
+
+
+
+.header{
+    display: inline-block;
+    width: 33.333%;
+
+  
+    
+
+}
+
+.data{
+    display: inline-block;
+    width: 33.333%;
+
+}
+
+
+.tableData{
+  
+
+
+}
+
+.edit{
+    color: red;
+    margin-right: 30px;
+    
+}
+
+.trash{
+    color: red;
+}
+
+
+.navigatepages button  {
+    margin-right: 10px;
+    width: 40px;
+    padding: 10px;
+
+}
