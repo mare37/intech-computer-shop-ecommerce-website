@@ -1,0 +1,131 @@
+.orders{
+
+ 
+  
+}
+
+
+.ordersContainer{
+    height: 100%;
+   
+
+
+    
+}
+
+
+.table{
+    h1{
+        margin-bottom: 15px;
+    }
+
+
+    padding: 29px 5%
+
+  
+    
+ 
+
+}
+
+
+
+
+
+
+
+.headerContainer{
+
+   
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+
+    background-color:rgb(255, 255, 255);
+    margin-bottom: 1px;
+    
+   
+    
+}
+.dataContainer{
+
+   
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    background-color:white;
+
+    margin-bottom: 1px;
+   
+   
+    
+}
+
+.dataContainer:hover{
+    background-color:rgb(247, 247, 247)
+}
+
+
+
+.header{
+    display: inline-block;
+    width: 33.333%;
+
+  
+    
+
+}
+
+.data{
+    display: inline-block;
+    width: 33.333%;
+
+}
+
+
+.tableData{
+  
+
+
+}
+
+.edit{
+    color: red;
+    margin-right: 30px;
+    
+}
+
+.trash{
+    color: red;
+}
+
+
+.navigatepages button  { 
+    margin-right: 10px;
+    width: 40px;
+    padding: 10px;
+
+}
+
+
+
+
+
+
+
+
+@media (min-width: 1024px) {
+
+    .orders{
+      // height: calc(100vh - 70px);
+       overflow: scroll;
+    
+       padding-top: 70px;
+
+     //   margin-left: 10%;
+
+      
+    }
+
+
+}
