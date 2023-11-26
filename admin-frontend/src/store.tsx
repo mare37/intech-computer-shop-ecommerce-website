@@ -1,11 +1,22 @@
 import { configureStore } from '@reduxjs/toolkit'
-import  sideBarReducer from './features/sidebarSlice'
+import  sideBarReducer from './redux/sidebarSlice'
+import popUpReducer  from "./redux/popupSlice" 
+import brandReducer from "./redux/brandSlice"
+import colourReducer from "./redux/colourSlice"
+import productCategoryReducer from "./redux/productcategorySlice"
+import productReducer from "./redux/productSlice"
+
 
 
 
 export const store = configureStore({
     reducer: {
-        sidebarController: sideBarReducer
+        sidebarController: sideBarReducer,
+        popUpController: popUpReducer,
+        brand: brandReducer,
+        colour: colourReducer,
+        productCategory: productCategoryReducer,
+        product: productReducer
      
     }
   })
