@@ -5,6 +5,8 @@ import Navbar from "./Navbar/Navbar";
 
 import Sidebar from "./Sidebar/Sidebar";
 
+import Popup from "./popup";
+
 import { Outlet } from "react-router-dom";
 
 function MainLayout() {
@@ -13,6 +15,10 @@ function MainLayout() {
       <Navbar />
 
       <Sidebar />
+
+      <Popup />
+
+    
 
       <div id="detail">
         <Outlet />
