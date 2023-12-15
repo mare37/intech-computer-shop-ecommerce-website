@@ -12,11 +12,11 @@ import {
   getOneProductCat
 } from "../controllers/productCatController";
 
-router.post("/", validateToken, isAdmin, createProductCat);
-router.delete("/:id", validateToken, isAdmin, deleteProductCat);
-router.put("/:id", validateToken, isAdmin, updateProductCat);
-router.get("/", validateToken, isAdmin, getAllProductCat);
-router.get("/:id", validateToken, isAdmin, getOneProductCat);
+router.post("/", createProductCat);
+router.delete("/:id",  deleteProductCat);
+router.put("/:id",updateProductCat);
+router.get("/",  getAllProductCat);
+router.get("/:id",  getOneProductCat);
 
 
 export default router;

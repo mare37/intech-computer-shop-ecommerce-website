@@ -15,17 +15,16 @@ import {
   uploadPhoto,
 } from "../controllers/productController";
 
-router.post("/", validateToken, isAdmin, createProduct);
-router.get("/:id", validateToken, getOneProduct);
-router.delete("/:id", validateToken, isAdmin, deleteOneProduct);
-router.put("/:id", validateToken, isAdmin, updateOneProduct);
-router.get("/", validateToken, getAllAciveProducts);
-router.post("/rating/:id", validateToken, addRating);
-router.get("/ratings/:id", validateToken, getRatings);
+router.post("/",  createProduct);
+router.get("/:id", getOneProduct);
+router.delete("/:id", deleteOneProduct);
+router.put("/:id",  updateOneProduct);
+router.get("/",  getAllAciveProducts);
+router.post("/rating/:id",  addRating);
+router.get("/ratings/:id", getRatings);
 router.post(
   "/uploadproductphoto",
-  validateToken,
-  isAdmin,
+ 
   upload.array("images"),
   productImgResize,
   uploadPhoto

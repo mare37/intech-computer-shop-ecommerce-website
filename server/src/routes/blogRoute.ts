@@ -17,13 +17,13 @@ import {
 
 router.use(express.static("./public"));
 
-router.post("/", validateToken, isAdmin, createBlog);
-router.delete("/:id", validateToken, isAdmin, deleteBlog);
-router.put("/:id", validateToken, isAdmin, updateBlog);
+router.post("/",  createBlog);
+router.delete("/:id", deleteBlog);
+router.put("/:id",  updateBlog);
 router.get("/:id", getOneBlog);
 router.get("/", getAllBlogs);
-router.put("/like/:blogId", validateToken, likeBlog);
-router.put("/dislike/:blogId", validateToken, dislikeBlog);
+router.put("/like/:blogId", likeBlog);
+router.put("/dislike/:blogId",  dislikeBlog);
 router.post(
   "/uploadblogphoto",
   validateToken,

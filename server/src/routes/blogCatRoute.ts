@@ -12,11 +12,11 @@ import {
   getOneBlogCat
 } from "../controllers/blogCatController";
 
-router.post("/", validateToken, isAdmin, createBlogCat);
-router.delete("/:id", validateToken, isAdmin, deleteBlogCat);
-router.put("/:id", validateToken, isAdmin, updateBlogCat);
-router.get("/", validateToken, isAdmin, getAllBlogCat);
-router.get("/:id", validateToken, isAdmin, getOneBlogCat);
+router.post("/", createBlogCat);
+router.delete("/:id",  deleteBlogCat);
+router.put("/:id",updateBlogCat);
+router.get("/",  getAllBlogCat);
+router.get("/:id", getOneBlogCat);
 
 
 export default router;
