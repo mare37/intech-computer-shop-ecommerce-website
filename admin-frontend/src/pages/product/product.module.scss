@@ -10,8 +10,20 @@
 .productContainer{
     height: 100%;
 
+    h1{
+        margin-bottom: 20px;
+       
+       }
+
+       h3{
+        margin-bottom: 20px;
+        margin-top: 50px;
+       }
+
     form{
         padding: 20px 10%;
+
+       
         
 
         input{
@@ -47,6 +59,10 @@
             color: white;
             font-size: 16px;
         }
+        button:disabled{
+            cursor: not-allowed;
+            background-color: rgb(116, 141, 116);
+         }
     
     }
 

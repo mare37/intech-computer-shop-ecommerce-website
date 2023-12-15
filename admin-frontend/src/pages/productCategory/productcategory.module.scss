@@ -1,13 +1,14 @@
-.addcolor{
+.addProductCategory{
 
     height: calc(100vh - 90px);
-    
+    background-color:rgb(243, 242, 242); 
+    overflow: scroll;
     padding-top: 90px;
   
 }
 
 
-.addcolorContainer{
+.addProductCategoryContainer{
     height: 100%;
     background-color:rgb(243, 242, 242);
 
@@ -48,9 +49,9 @@
 
 @media (min-width: 1024px) {
 
-    .addcolor{
+    .addProductCategory{
         height: calc(100vh - 70px);
-    
+        overflow: scroll;
         padding-top: 70px;
 
         margin-left: 17%;
