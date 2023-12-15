@@ -5,6 +5,8 @@ import brandReducer from "./redux/brandSlice"
 import colourReducer from "./redux/colourSlice"
 import productCategoryReducer from "./redux/productcategorySlice"
 import productReducer from "./redux/productSlice"
+import blogCategoryReducer from "./redux/blogcategorySlice"
+import blogReducer from "./redux/blogSlice"
 
 
 
@@ -16,7 +18,9 @@ export const store = configureStore({
         brand: brandReducer,
         colour: colourReducer,
         productCategory: productCategoryReducer,
-        product: productReducer
+        product: productReducer,
+        blogCategory: blogCategoryReducer,
+        blog: blogReducer
      
     }
   })
