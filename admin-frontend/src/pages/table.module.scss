@@ -1,12 +1,13 @@
 
 .table{
+
    
-
-  
-  
+   
     padding: 29px 10%
- 
 
+   
+ 
+  
 }
 
 
@@ -87,3 +88,40 @@
     padding: 10px;
 
 }
+
+.error{
+    margin-top: 15px;
+     color: red;
+     display: block;
+
+    }
+
+    .success{
+     margin-top: 15px;
+     color: green;
+     display: block;
+
+    }
+
+
+
+
+    @media (min-width: 1024px) {
+
+        .error{
+       
+            color: red;
+            display: inline-block;
+    
+           }
+    
+           .success{
+           
+            color: green;
+          
+    
+           }
+    
+
+
+    }  

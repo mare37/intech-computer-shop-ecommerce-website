@@ -9,13 +9,17 @@ import MainLayout from "./Layout/MainLayout";
 
 //pages
 import AddBrand from "./pages/brand/addbrand";
+import UpdateBrand from "./pages/brand/updatebrand";
 import AddColour from "./pages/colour/addcolor";
 import ProductCategory from "./pages/productCategory/productcategory";
 import BrandList from "./pages/brand/brandlist";
 import ColourList from "./pages/colour/colourlist";
 import ProductCategoryList from "./pages/productCategory/productcategorylist";
 import AddProduct from "./pages/product/addproduct";
+import UpdateProduct from "./pages/product/updateproduct";
+import ProductList from "./pages/product/productlist";
 import WriteBlog from "./pages/blog/writeblog";
+import UpdateBlog from "./pages/blog/updateblog";
 import AddBlogCategory from "./pages/blog/addblogcategory";
 import BlogCategoryList from "./pages/blog/blogcategorylist";
 import BlogList from "./pages/blog/bloglist";
@@ -24,7 +28,7 @@ import CouponList from "./pages/coupon/couponlist";
 import Orders from "./pages/orders/orders";
 import Enquiries from "./pages/enquiries/enquiries";
 import Customers from "./pages/customers/customers";
-import Dashboard from "./pages/dashboard/dashboard"
+import Dashboard from "./pages/dashboard/dashboard";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -41,11 +45,23 @@ const router = createBrowserRouter([
         element: < AddBrand />,
       },
       {
+        path: "updatebrand/:id",
+        element: < UpdateBrand />,
+      },
+      {
         path: "addcolor",
         element: < AddColour />,
       },
       {
+        path: "updatecolour/:id",
+        element: < AddColour />,
+      },
+      {
         path: "productcategory",
+        element: < ProductCategory />,
+      },
+      {
+        path: "updateproductcategory/:id",
         element: < ProductCategory />,
       },
       {
@@ -65,11 +81,29 @@ const router = createBrowserRouter([
         element: < AddProduct />,
       },
       {
+        path: "updateproduct/:id",
+        element: < UpdateProduct />,
+      },
+
+      {
+        path: "productlist",
+        element: < ProductList />,
+      },
+      {
         path: "writeblog",
         element: < WriteBlog />,
       },
+
+      {
+        path: "updateblog/:id",
+        element: < UpdateBlog/>,
+      },
       {
         path: "addblogcategory",
+        element: < AddBlogCategory />,
+      },
+      {
+        path: "updateblogcategory/:id",
         element: < AddBlogCategory />,
       },
       {
