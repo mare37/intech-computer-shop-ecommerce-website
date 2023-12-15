@@ -1,6 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import styles from "./blog.module.scss";
 import tableStyles from "../table.module.scss"
+import { ToastContainer, toast } from "react-toastify";
+
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { setPopUpToTrue,setId } from "../../redux/popupSlice";
+import { getAllBlogCategories } from "../../api/blogcategory";
+import { reset,resetGettingBlogCategories } from "../../redux/blogcategorySlice";
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -14,29 +22,19 @@ import { BiSolidTrashAlt } from "react-icons/bi";
 import { BiEditAlt } from "react-icons/bi";
 
 
-const DATA = [
-  {
-    sNo: 1,
-    title: "reviews",
-  },
-  {
-    sNo: 2,
-    title: "news update",
-  },
- 
-];
 
-type Brand = {
-  sNo: number;
+
+type BlogCategory = {
+  _id: string;
   title: string;
 };
 
-const columnHelper = createColumnHelper<Brand>();
+const columnHelper = createColumnHelper<BlogCategory>();
 
 
 
 const columns = [
-  columnHelper.accessor("sNo", {
+  columnHelper.accessor("_id", {
     header: "Serial No.",
     cell: (info) => info.getValue(),
   }),
@@ -47,7 +45,23 @@ const columns = [
 ];
 
 function BlogCategoryList() {
-  const [data, setData] = useState(DATA);
+  const [data, setData] = useState<any>([]);
+  const [pageFetchingData, setPageFetchingData] = useState(false)
+  const [delectingAction, setDeletingAction] = useState(false)
+
+  const  navigate = useNavigate()
+
+  const {popup} = useAppSelector(state => state.popUpController)
+  const {isSuccess, isLoading, isError, gettingBlogCategories } = useAppSelector(state => state.blogCategory)
+
+  const dispatch = useAppDispatch()
+
+
+  //  Notify that the deletion was successfull when this page loads
+  const notify = () => toast.success("Deleted Successfully!");
+
+  //Notify if there was an error during delection. :)
+  const notifyError = () => toast.error("Failed to delete!");
 
   const table = useReactTable({
     data,
@@ -56,10 +70,91 @@ function BlogCategoryList() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  console.log(table.getRowModel().rows);
+  useEffect(()=>{
+    
+    getAllBlogCategories(dispatch).then((response)=>{ 
+     
+      console.log(response);
+      setData(response) 
+    //  dispatch(reset());
+      dispatch( resetGettingBlogCategories())
+     
+
+  
+    }).catch((err)=>{
+      console.log();
+      
+    })
+  
+  
+  
+  },[])
+
+
+
+  useEffect(()=>{
+
+    getAllBlogCategories(dispatch).then((response)=>{
+      console.log(response);
+      setData(response) 
+     
+      
+  
+    }).catch((err)=>{
+      console.log();
+      
+    })
+  
+  
+  
+  },[popup])
+
+  console.log("Getting " +  gettingBlogCategories);
+
+  useEffect(() => {
+    
+    // If deletion successfull and page is not fetching data
+    if (isSuccess === true  && gettingBlogCategories === false) { 
+
+      console.log("Getting " +  gettingBlogCategories);
+      
+     
+      console.log("success");
+      notify()
+      dispatch(reset());
+   
+     // dispatch( resetGet())
+    }
+    if (isSuccess === true  && gettingBlogCategories === true) {
+     
+      console.log("success");
+     // notify()
+     dispatch( reset())
+     dispatch( resetGettingBlogCategories())
+   
+    
+    }
+  
+    if (isError   && pageFetchingData === false   ) {
+    ///  notifyError();
+      dispatch(reset());
+    }
+  }, [isSuccess, isError]);
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div className={styles.blog}>
+        <ToastContainer theme="light" />
       <div className={styles.blogContainer}>
         <div className={tableStyles.table}>
           <h1>Blog categories</h1>
@@ -92,8 +187,16 @@ function BlogCategoryList() {
                   </div>
                 ))}
                 <div className={tableStyles.data}>
-                  <BiEditAlt className={tableStyles.edit} size={30} />
-                  <BiSolidTrashAlt className={tableStyles.trash} size={30} />
+                  <BiEditAlt     onClick={() => {
+                      navigate(`/admin/updateblogcategory/${row.original._id}`);
+                    }}         className={tableStyles.edit} size={30} />
+                  <BiSolidTrashAlt  onClick={() => {
+                       
+                      dispatch(setPopUpToTrue());
+                      dispatch(setId({ id: row.original._id }));
+                     // setDeleteButton(true)
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}                            className={tableStyles.trash} size={30} />
                 </div>
               </div>
             ))}

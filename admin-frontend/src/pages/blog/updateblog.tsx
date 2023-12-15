@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -6,13 +7,12 @@ import { useDispatch } from "react-redux";
 import Dropzone from "react-dropzone";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { ToastContainer, toast } from "react-toastify";
 
 import styles from "./blog.module.scss";
 
 import { getAllBlogCategories } from "../../api/blogcategory";
 
-import { createBlog } from "../../api/blog";
+import { createBlog, getOneBlog, updateBlog } from "../../api/blog";
 
 const schema = yup.object().shape({
   title: yup.string().required(),
@@ -20,20 +20,7 @@ const schema = yup.object().shape({
   // description: yup.string().required(),
 });
 
-const DATA = [
-  {
-    sNo: 1,
-    title: "review",
-  },
-  {
-    sNo: 2,
-    title: "news update",
-  },
-];
-
-const handleChange = () => {
-
-};
+const handleChange = () => {};
 
 function isQuillEmpty(value: string) {
   if (
@@ -45,19 +32,22 @@ function isQuillEmpty(value: string) {
   return false;
 }
 
-function WriteBlog() {
+function UpdateBlog() {
   const [acceptedFiles, setAcceptedFile] = useState<File[]>([]);
 
   const [productCategories, setProductCategories] = useState<any>([]);
   const [description, setDescription] = useState("");
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [dislikes, setDislikes] = useState([]);
+  const [likes, setLikes] = useState([]);
+  const [images, setImages] = useState([]);
+  const [numViews, setNumViews] = useState(0);
+  const [status, setStatus] = useState("");
 
   const dispatch = useDispatch();
 
-
-  const notify = () => toast.success("Blog posted Successfully!");
-
-  //Notify if there was an error during delection. :)
-  const notifyError = () => toast.error("Failed to post blog!");
+  const { id } = useParams();
 
   const {
     register,
@@ -77,41 +67,74 @@ function WriteBlog() {
       .catch((error) => {
         console.log(error);
       });
+
+    if (id !== undefined) {
+      getOneBlog(id, dispatch)
+        .then((response) => {
+          console.log(response);
+          setTitle(response.title);
+          setDescription(response.description);
+          setCategory(response.category);
+          setDislikes(response.dislikes);
+          setImages(response.images);
+          setLikes(response.likes);
+          setNumViews(response.numViews);
+          setStatus(response.status);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }, []);
 
   return (
     <div className={styles.blog}>
-       <ToastContainer theme="light" />
       <div className={styles.blogContainer}>
         <form
-          onSubmit={handleSubmit((data:any) => {
-            const isempty = isQuillEmpty(description);
+          onSubmit={(e)=>{
 
-            if (isempty) {
-              console.log("Description is empty");
-            } else {
-              data["description"] = description;
-              createBlog(data, dispatch).then((response)=>{
+            e.preventDefault()
 
-                console.log(response);
-                if(response.blogPosted){
-                  notify()
-                }else{
-                  notifyError()
-                }
-                
-                
+            const blogUpdate: any = {};
 
-              })
-              console.log(data);
+            blogUpdate["title"] = title;
+          //  blogUpdate["likes"] = likes;
+          //  blogUpdate["dislikes"] = dislikes;
+           blogUpdate["category"] = category;
+         //   blogUpdate["numViews"] = numViews;
+         //   blogUpdate["status"] = status;
+         //   blogUpdate["images"] = images;
+            blogUpdate["description"] = description;
+
+
+            if (id !== undefined) {
+              console.log(blogUpdate);
+              
+              updateBlog(id,blogUpdate, dispatch);
             }
-          })}
-        >
-          <h3>Write blog</h3>
-          <input {...register("title")} placeholder="Enter blog title" />
-          {errors.title && <p>Title is required.</p>}
 
-          <select {...register("category")}>
+
+          }
+
+
+
+          }
+        >
+          <h3>Edit blog</h3>
+          <input
+            value={title}
+            placeholder="Enter blog title"
+            onChange={(e) => {
+              setTitle(e.target.value);
+            }}
+          />
+
+          <select
+          value={category}
+            onChange={(e) => {
+              setCategory(e.target.value);
+            }}
+          >
             <option value="">Select blog category</option>
             {productCategories.map((item: any) => {
               return (
@@ -121,13 +144,15 @@ function WriteBlog() {
               );
             })}
           </select>
-          {errors.category && <p>Blog category is required.</p>}
 
           <ReactQuill
+            value={description}
             theme="snow"
             style={{ width: "100%", marginBottom: "10px" }}
             placeholder="Write here"
-            onChange={(value)=>{setDescription(value)}}
+            onChange={(value) => {
+              setDescription(value);
+            }}
           />
 
           <Dropzone
@@ -159,11 +184,11 @@ function WriteBlog() {
             )}
           </Dropzone>
 
-          <button>Add Blog</button>
+          <button>Edit blog</button>
         </form>
       </div>
     </div>
   );
 }
 
-export default WriteBlog;
+export default UpdateBlog;
