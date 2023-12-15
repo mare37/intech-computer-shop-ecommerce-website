@@ -24,14 +24,15 @@ export interface Product {
   title: string;
   slug: string;
   description: string;
+  tag:string
   price: number;
   sold: number;
-  brand: number;
+  brand:ObjectId;
   status: string;
   category: ObjectId;
   quantity: number;
   images?: Array<string>;
-  color: string;
+  colour: ObjectId;
   ratings: [];
   totalRating:Number
 }
@@ -40,7 +41,7 @@ export interface Blog {
   title: string;
   description: string;
   status: string;
-  category: string;
+  category: ObjectId;
   numViews: number;
   isLiked: boolean;
   isDisliked: boolean;

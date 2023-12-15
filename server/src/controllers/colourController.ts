@@ -47,7 +47,7 @@ export const getAllColours = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const result = await colourModel.find();
+    const result = await colourModel.find({status:"Active"});
     res.send({ result: result });
   } catch (error) {
     res.send({ error: error });

@@ -4,13 +4,13 @@ import { Blog } from "../types";
 import validateMongoID from "../middlewares/validateMongoId";
 
 export const createBlog = async (req: Request, res: Response) => {
-  const { title, description, category } = req.body;
+  const { blogObject } = req.body;
 
   try {
     const result = await blogModel.create({
-      title: title,
-      description: description,
-      category: category,
+      title: blogObject.title,
+      description:blogObject.description,
+      category:blogObject.category,
     });
 
     console.log(result);
@@ -54,15 +54,20 @@ export const deleteBlog = async (req: Request, res: Response) => {
 export const updateBlog = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const { title, description, category } = req.body;
+  //const { title, description, category } = req.body;
+
+  const { blogObject  } = req.body
+
+  console.log(blogObject);
+  
 
   try {
     const result = await blogModel.findByIdAndUpdate(
       { _id: id },
       {
-        title: title,
-        description: description,
-        category: category,
+        title:blogObject.title,
+        description: blogObject.description,
+        category:blogObject.category,
       },
       { new: true }
     );
@@ -72,11 +77,13 @@ export const updateBlog = async (req: Request, res: Response) => {
       message: "Blog updated",
       result: result,
     });
-  } catch (error) {
+  } catch (err) {
+    console.log(err);
+    
     res.send({
       blogUpdated: false,
       message: "Failed to update blog",
-      error: error,
+      error: err,
     });
   }
 };
@@ -91,19 +98,29 @@ export const getOneBlog = async (req: Request, res: Response) => {
     );
     const blog = await blogModel.findById({ _id: id });
 
-    return res.send({
+    return res.send({blogRetrieved:true,
       blog,
     });
   } catch (error) {
     console.log(error);
+    return res.send({blogRetrieved:false,error:error})
   }
 };
 
 export const getAllBlogs = async (req: Request, res: Response) => {
-  try {
-    const allBlogs = await blogModel.find();
 
-    res.send({
+ 
+  var populateQuery = [
+  
+    { path: "category", select: "title" },
+  ];
+
+
+
+  try {
+    const allBlogs = await blogModel.find({status: "Active"}).populate(populateQuery )
+
+    res.send({blogRetrieved:true,
       blogs: allBlogs,
     });
   } catch (error) {

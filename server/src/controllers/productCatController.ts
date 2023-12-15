@@ -47,7 +47,7 @@ export const getAllProductCat = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const result = await productCatModel.find();
+    const result = await productCatModel.find({status:"Active"});
     res.send({ result: result });
   } catch (error) {
     res.send({ error: error });
@@ -65,8 +65,8 @@ export const updateProductCat = async (req: Request, res: Response) => {
       { title: title },
       { new: true }
     );
-    res.send({ productCatDeleted: true, result: result });
+    res.send({ productCatUpdated: true, result: result });
   } catch (error) {
-    res.send({ productCatDeleted: false, error: error });
+    res.send({ productCatUpdated: false, error: error });
   }
 };
