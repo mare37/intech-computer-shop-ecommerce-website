@@ -12,11 +12,11 @@ import { VscTriangleDown } from "react-icons/vsc";
 
 import { useAppSelector, useAppDispatch } from "../../hooks";
 
-import { setSiderBar, setSiderBarToFalse } from "../../features/sidebarSlice";
+import { setSiderBar, setSiderBarToFalse } from "../../redux/sidebarSlice";
 import { useState } from "react";
 
 function Sidebar() {
-  const sidebar: boolean = useAppSelector(
+  const sidebar: boolean = useAppSelector( 
     (state) => state.sidebarController.value
   );
   const dispatch = useAppDispatch();
@@ -61,7 +61,7 @@ function Sidebar() {
             <p>
               <Link to="addproduct">Add product</Link>
             </p>
-            <p>Products List</p>
+            <p><Link to="productlist">Product list</Link></p>
             <p>
               {" "}
               <Link to="addbrand">Add brand</Link>
@@ -75,7 +75,7 @@ function Sidebar() {
             </p>
             <p>
               {" "}
-              <Link to="productcategorylist">Categories list</Link>
+              <Link to="productcategorylist">Product categories list</Link>
             </p>
             <p>
               <Link to="addcolor">Add color</Link>

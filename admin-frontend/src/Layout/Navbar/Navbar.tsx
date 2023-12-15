@@ -6,15 +6,14 @@ import { ImCancelCircle } from "react-icons/im";
 
 import { useAppSelector, useAppDispatch } from "../../hooks";
 
-import { setSiderBar, setSiderBarToFalse } from "../../features/sidebarSlice";
+import { setSiderBar, setSiderBarToFalse } from "../../redux/sidebarSlice";
 
 function Navbar() {
   const sidebar: boolean = useAppSelector(
     (state) => state.sidebarController.value
   );
   const dispatch = useAppDispatch();
-  console.log(sidebar);
-
+ 
   return (
     <div id={styles.navbar}>
       <div className={styles.nav}>

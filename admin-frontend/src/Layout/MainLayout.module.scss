@@ -1,8 +1,105 @@
 
 .mainLayOut{
-
+position: relative;
+overflow: hidden;
  
 
    /* background-color:rgb(243, 242, 242); */
   
+}
+
+
+.popup{
+
+   position: absolute;
+   //background-color: aqua;
+   height: 100%;
+   width: 100%;
+   z-index: 10;
+
+  
+
+ //  display: flex;
+  // flex-direction: column;
+ //  align-items: center;
+ //  justify-content: center;
+
+   background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+
+
+   div{
+      background-color: white;
+      height: 130px;
+      margin-top: 20%;
+      margin-left: 20px;
+      margin-right: 20px;
+
+      padding: 10px;
+      border-radius: 5px; 
+
+      display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   }
+}
+
+.removePopup{
+   
+   position: absolute;
+   background-color: aqua;
+   height: 100%;
+   width: 100%;
+   
+   left: 100%;
+
+}
+
+
+@media (min-width: 768px) {
+
+
+   .popup{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+   
+   
+      div{
+
+         width: 70%;
+
+      }
+
+
+   }
+
+
+
+}
+
+
+@media (min-width: 768px) {
+
+
+   .popup{
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+     
+     
+        div{
+         height: 160px;
+         margin-top: 10%;
+           width: 50%;
+  
+        }
+  
+  
+     }
+  
+
+
 }
