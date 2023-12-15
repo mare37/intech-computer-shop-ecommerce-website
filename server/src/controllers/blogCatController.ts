@@ -47,8 +47,8 @@ export const getAllBlogCat = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const result = await blogCatModel.find();
-    res.send({ result: result });
+    const result = await blogCatModel.find({status: "Active"});
+    res.send({blogCatRetrieved: true, result: result }); 
   } catch (error) {
     res.send({ error: error });
   }

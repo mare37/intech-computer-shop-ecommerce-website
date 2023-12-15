@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import brandModel from "../models/brandModel";
 
+
 export const createBrand = async (req: Request, res: Response) => {
   const { title } = req.body;
 
@@ -47,7 +48,7 @@ export const getAllBrands = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const result = await brandModel.find();
+    const result = await brandModel.find({status:"Active"});
     res.send({ result: result });
   } catch (error) {
     res.send({ error: error });

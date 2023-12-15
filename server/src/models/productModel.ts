@@ -21,6 +21,10 @@ const productSchema = new Schema<Product>(
       type: String,
       required: true,
     },
+    tag: {
+      type: String,
+      required: true,
+    },
     price: {
       type: Number,
       required: true,
@@ -33,8 +37,8 @@ const productSchema = new Schema<Product>(
     },
 
     brand: {
-      type: Number,
-      enum: ["Lenovo", "Samsung"],
+      type: mongoose.Schema.ObjectId,
+      ref: "Brand"
     },
     status: {
       default: "Active",
@@ -45,14 +49,14 @@ const productSchema = new Schema<Product>(
 
     category: {
       type: mongoose.Schema.ObjectId,
-      ref: "Category",
+      ref: "ProductCategory",
     },
     quantity: Number,
     images: [],
 
-    color: {
-      type: String,
-      enum: ["black", "white", "red"],
+    colour: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Colour",
     },
 
     ratings: [
