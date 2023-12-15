@@ -1,31 +1,31 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface productCatState {
-  productCat: string[];
+interface blogState {
+  blog: string[];
   isError: boolean;
   isLoading: boolean;
   isSuccess: boolean;
-  gettingProductCategories: boolean;
+  gettingBlogs: boolean;
 }
 
-const initialState: productCatState = {
-  productCat: [],
+const initialState: blogState = {
+  blog: [],
   isError: false,
   isLoading: false,
   isSuccess: false,
-  gettingProductCategories: false,
+  gettingBlogs: false,
 };
 
-export const productCatSlice = createSlice({
+export const blogSlice = createSlice({
   name: "sidebar",
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setGettingProductCategories: (state) => {
-      state.gettingProductCategories = true;
+    setGettingBlogs: (state) => {
+      state.gettingBlogs = true;
     },
-    resetGettingProductCategories: (state) => {
-      state.gettingProductCategories = false;
+    resetGettingBlogs: (state) => {
+      state.gettingBlogs= false;
     },
 
     isLoading: (state) => {
@@ -50,6 +50,13 @@ export const productCatSlice = createSlice({
   },
 });
 
-export const { isLoading, isSuccess, isError, reset,setGettingProductCategories,resetGettingProductCategories } = productCatSlice.actions;
+export const {
+  isLoading,
+  isSuccess,
+  isError,
+  reset,
+  setGettingBlogs,
+  resetGettingBlogs
+} = blogSlice.actions;
 
-export default productCatSlice.reducer;
+export default blogSlice.reducer;

@@ -4,7 +4,7 @@ interface productState {
   productIsError: boolean;
   productIsLoading: boolean;
   productIsSuccess: boolean;
-  GET: boolean;
+  gettingProducts: boolean;
   DELETE: boolean;
 }
 
@@ -12,7 +12,7 @@ const initialState: productState = {
   productIsError: false,
   productIsLoading: false,
   productIsSuccess: false,
-  GET: false,
+  gettingProducts: false,
   DELETE: false,
 };
 
@@ -24,14 +24,14 @@ export const productSlice = createSlice({
     isDelete: (state) => {
       state.DELETE = true;
     },
-    isGet: (state) => {
-      state.GET = true;
+    setGettingProducts: (state) => {
+      state.gettingProducts= true;
     },
     resetDelete: (state) => {
       state.DELETE = false;
     },
-    resetGet: (state) => {
-      state.GET = false;
+    resetGettingProducts: (state) => {
+      state.gettingProducts= false;
     },
     isLoading: (state) => {
       state.productIsLoading = true;
@@ -61,9 +61,9 @@ export const {
   isError,
   reset,
   isDelete,
-  isGet,
+  setGettingProducts,
   resetDelete,
-  resetGet,
+  resetGettingProducts,
 } = productSlice.actions;
 
 export default productSlice.reducer;
