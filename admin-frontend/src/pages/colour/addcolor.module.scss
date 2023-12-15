@@ -1,7 +1,7 @@
 .addcolor{
 
-    height: calc(100vh - 90px);
-    
+    min-height: calc(100vh - 90px);
+    background-color:rgb(243, 242, 242); 
     padding-top: 90px;
   
 }
@@ -50,7 +50,7 @@
 
     .addcolor{
         height: calc(100vh - 70px);
-    
+        overflow: scroll;
         padding-top: 70px;
 
         margin-left: 17%;
@@ -60,3 +60,4 @@
 
 
 }
+

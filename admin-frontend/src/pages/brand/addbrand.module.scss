@@ -1,6 +1,182 @@
 .addbrand{
 
-
+    min-height: calc(100vh - 90px);
+    background-color:rgb(243, 242, 242); 
     padding-top: 90px;
   
+}
+
+
+.addbrandContainer{
+    height: 100%;
+   
+
+
+    form{
+        padding: 20px 10%;
+        
+
+        input{
+            width: 100%;
+            margin-bottom: 5px;
+            height: 30px;
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        p{
+            color: red;
+            margin: 0;
+            font-size: 12px;
+        }
+
+       .error{
+       margin-top: 15px;
+        color: red;
+        display: block;
+
+       }
+
+       .success{
+        margin-top: 15px;
+        color: green;
+        display: block;
+
+       }
+
+
+        button{
+            margin-top: 25px;
+           
+            background-color: green;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+        }
+        button:disabled{
+           cursor: not-allowed;
+           background-color: rgb(116, 141, 116);
+        }
+    
+    }
+}
+
+.table{
+   
+
+  
+  
+    padding: 29px 10%
+ 
+
+}
+
+.headerContainer{
+
+   
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+
+    background-color:rgb(255, 255, 255);
+    margin-bottom: 1px;
+    
+   
+    
+}
+.dataContainer{
+
+   
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    background-color:white;
+
+    margin-bottom: 1px;
+   
+   
+    
+}
+
+.dataContainer:hover{
+    background-color:rgb(247, 247, 247)
+}
+
+
+
+.header{
+    display: inline-block;
+    width: 33.333%;
+
+  
+    
+
+}
+
+.data{
+    display: inline-block;
+    width: 33.333%;
+
+}
+
+
+.tableData{
+  
+
+
+}
+
+.edit{
+    color: red;
+    margin-right: 30px;
+    
+}
+
+.trash{
+    color: red;
+}
+
+
+.navigatepages button  {
+    margin-right: 10px;
+    width: 40px;
+    padding: 10px;
+
+}
+
+
+
+
+
+
+@media (min-width: 1024px) {
+
+    .addbrand{
+       height: calc(100vh - 70px);
+       overflow: scroll;
+    
+        padding-top: 70px;
+
+        margin-left: 17%;
+
+      
+    }
+
+    .error{
+       
+        color: red;
+        display: inline-block;
+
+       }
+
+       .success{
+       
+        color: green;
+        display: inline-block;
+
+       }
+
+
 }

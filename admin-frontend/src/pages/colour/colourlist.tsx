@@ -1,6 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { ToastContainer, toast } from 'react-toastify';
+import { setPopUpToTrue, setId } from "../../redux/popupSlice";
+import { reset } from "../../redux/colourSlice";
 import styles from "./addcolor.module.scss";
-import tableStyles from "../table.module.scss"
+import tableStyles from "../table.module.scss";
+import { getAllColours } from "../../api/colour";
 import {
   useReactTable,
   getCoreRowModel,
@@ -13,30 +19,19 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { BiEditAlt } from "react-icons/bi";
 
-
-const DATA = [
-  {
-    sNo: 1,
-    title: "Red",
-  },
-  {
-    sNo: 2,
-    title: "Green",
-  },
- 
-];
-
-type Brand = {
-  sNo: number;
+type Colour = {
+  _id: string;
   title: string;
+  /* createdAt:string
+  status:string
+   updatedAt:string
+    __v:number*/
 };
 
-const columnHelper = createColumnHelper<Brand>();
-
-
+const columnHelper = createColumnHelper<Colour>();
 
 const columns = [
-  columnHelper.accessor("sNo", {
+  columnHelper.accessor("_id", {
     header: "Serial No.",
     cell: (info) => info.getValue(),
   }),
@@ -47,7 +42,20 @@ const columns = [
 ];
 
 function ColourList() {
-  const [data, setData] = useState(DATA);
+  const [data, setData] = useState<any>([]);
+
+  const navigate = useNavigate()
+
+ // const notify = () => toast.success("Deleted Successfully!")
+ const notify = () => toast("Deleted successfully",{position:"top-center", type:"success"})
+  const notifyError = () => toast.error("Failed to delete!");
+
+  const dispatch = useAppDispatch();
+  const popup = useAppSelector((state) => {
+    return state.popUpController.popup;
+  });
+
+  const {isError,isLoading,isSuccess} = useAppSelector(state => state.colour)
 
   const table = useReactTable({
     data,
@@ -56,17 +64,55 @@ function ColourList() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  console.log(table.getRowModel().rows);
+  useEffect(() => {
+    getAllColours(dispatch).then((response) => {
+      console.log(response.result);
+      console.log("triggered");
 
+      setData(response.result.reverse());
+    });
+  }, []);
+
+
+  useEffect(() => {
+    getAllColours(dispatch).then((response) => {
+      console.log(response.result);
+      console.log("triggered");
+
+      setData(response.result.reverse());
+    });
+  }, [popup]);
+
+  useEffect(()=>{
+    if(isSuccess){
+       notify()
+      console.log("success");
+      dispatch(reset())
+     
+    }
+    if(isError){
+      notifyError()
+      dispatch(reset())
+    }
+
+  
+
+  },[isSuccess, isError])
+
+  
   return (
     <div className={styles.addcolor}>
       <div className={styles.addcolorContainer}>
+    <ToastContainer        theme="light"          />
         <div className={tableStyles.table}>
           <h1>Colours</h1>
           <section>
             {table.getHeaderGroups().map((headerGroup) => {
               return (
-                <div key={headerGroup.id} className={tableStyles.headerContainer}>
+                <div
+                  key={headerGroup.id}
+                  className={tableStyles.headerContainer}
+                >
                   {headerGroup.headers.map((header) => {
                     return (
                       <div key={header.id} className={tableStyles.header}>
@@ -92,8 +138,16 @@ function ColourList() {
                   </div>
                 ))}
                 <div className={tableStyles.data}>
-                  <BiEditAlt className={tableStyles.edit} size={30} />
-                  <BiSolidTrashAlt className={tableStyles.trash} size={30} />
+                  <BiEditAlt    onClick={()=>{navigate(`/admin/updatecolour/${row.original._id}`)}}           className={tableStyles.edit} size={30} />
+                  <BiSolidTrashAlt
+                    onClick={() => {
+                      dispatch(setPopUpToTrue());
+                      dispatch(setId({ id: row.original._id }));
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className={tableStyles.trash}
+                    size={30}
+                  />
                 </div>
               </div>
             ))}
