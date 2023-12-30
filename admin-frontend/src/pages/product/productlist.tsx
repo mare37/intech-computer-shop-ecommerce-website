@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { setPopUpToTrue, setId } from "../../redux/popupSlice";
-import { reset,resetGettingProducts } from "../../redux/productSlice";
+import { reset, resetGettingProducts } from "../../redux/productSlice";
 import { getAllProducts } from "../../api/product";
 import styles from "./product.module.scss";
 import tableStyles from "../table.module.scss";
@@ -18,13 +18,15 @@ import {
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { BiEditAlt } from "react-icons/bi";
 
-
-
 interface brand {
   title: string;
 }
 
 interface category {
+  title: string;
+}
+
+interface colour {
   title: string;
 }
 
@@ -34,7 +36,7 @@ type Product = {
   brand: brand;
   quantity: number;
   category: category;
-  colour: string;
+  colour: colour;
   price: number;
 };
 
@@ -60,6 +62,10 @@ const columns = [
     header: "Category",
     cell: (info) => info.getValue().title,
   }),
+  columnHelper.accessor("colour", {
+    header: "Colour",
+    cell: (info) => info.getValue().title,
+  }),
   columnHelper.accessor("price", {
     header: "Price",
     cell: (info) => info.getValue() + "/-",
@@ -74,15 +80,16 @@ function ProductList() {
 
   const dispatch = useAppDispatch();
 
-  const { productIsError, productIsSuccess, productIsLoading , gettingProducts} = useAppSelector(
-    (state) => state.product
-  );
+  const {
+    productIsError,
+    productIsSuccess,
+    productIsLoading,
+    gettingProducts,
+  } = useAppSelector((state) => state.product);
 
-  const {popup} = useAppSelector(state => state.popUpController)
+  const { popup } = useAppSelector((state) => state.popUpController);
 
- 
-  
-  const dataloaded = ()=> toast.success("Data loaded ")
+  const dataloaded = () => toast.success("Data loaded ");
   const notify = () => toast.success("Deleted Successfully!");
   const notifyError = () => toast.error("Failed to delete!");
 
@@ -94,42 +101,39 @@ function ProductList() {
   });
 
   useEffect(() => {
-    getAllProducts(dispatch).then((response) => {
-      console.log(response?.data);
-      
-      setData(response?.data?.result.reverse());
-    }).catch((err)=>{
-      console.log(err);
-      
-    })
+    getAllProducts(dispatch)
+      .then((response) => {
+        console.log(response?.data);
+
+        setData(response?.data?.result.reverse());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   useEffect(() => {
-    getAllProducts(dispatch).then((response) => {
-      console.log(response?.data?.result);
-      
+    getAllProducts(dispatch)
+      .then((response) => {
+        console.log(response?.data?.result);
 
-      setData(response?.data?.result.reverse());
-    }).catch((err)=>{
-      console.log(err);
-      
-    })
+        setData(response?.data?.result.reverse());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [popup]);
   useEffect(() => {
     if (productIsSuccess === true && gettingProducts === true) {
-     
       console.log("success");
       dispatch(reset());
-      dispatch(resetGettingProducts ())
+      dispatch(resetGettingProducts());
     }
-    if(productIsSuccess === true && gettingProducts === false){
+    if (productIsSuccess === true && gettingProducts === false) {
       //dataloaded successfully
       notify();
       console.log("success");
       dispatch(reset());
-      
-
-
     }
     if (productIsError) {
       notifyError();
@@ -186,7 +190,7 @@ function ProductList() {
                     onClick={() => {
                       dispatch(setPopUpToTrue());
                       dispatch(setId({ id: row.original._id }));
-                      setDeleteButton(true)
+                      setDeleteButton(true);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                     className={tableStyles.trash}

@@ -1,21 +1,17 @@
 import { Request, Response } from "express";
 import brandModel from "../models/brandModel";
 
-
 export const createBrand = async (req: Request, res: Response) => {
   const { title } = req.body;
 
-  
+  try {
+    const result = await brandModel.create({ title: title });
+    return res.send({ brandCreated: true, result: result });
+  } catch (error) {
+    console.log(error);
 
-    try {
-      const result = await brandModel.create( 
-        { title: title },
-      );
-    return  res.send({ brandCreated: true, result: result });
-    } catch (error) {
-      res.send({ brandCreated: false, error: error });
-    }
-  
+    res.send({ brandCreated: false, error: error });
+  }
 };
 
 export const deleteBrand = async (req: Request, res: Response) => {
@@ -48,7 +44,7 @@ export const getAllBrands = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const result = await brandModel.find({status:"Active"});
+    const result = await brandModel.find({ status: "Active" });
     res.send({ result: result });
   } catch (error) {
     res.send({ error: error });
