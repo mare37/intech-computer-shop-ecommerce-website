@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import slugify from "slugify";
+import uniqid from "uniqid";
 import productModel from "../models/productModel";
 import _ from "lodash";
 import mongoose from "mongoose";
@@ -12,14 +13,13 @@ import limitFields from "../utils/limitfields";
 export const createProduct = async (req: Request, res: Response) => {
   console.log(req.body.productObject);
 
-  const {productObject} = req.body;
+  const { productObject } = req.body;
 
   console.log(productObject);
-  
 
-  
-     productObject.slug = slugify(productObject.title); 
-  
+  const uniqueId = uniqid();
+  const slug = slugify(productObject.title);
+  productObject.slug = slug + "-" + uniqueId;
 
   try {
     const result = await productModel.create(productObject);
@@ -29,7 +29,7 @@ export const createProduct = async (req: Request, res: Response) => {
     //res.send(result);
   } catch (err) {
     console.log(err);
-    res.send({ productCreated: false, err: err});
+    res.send({ productCreated: false, err: err });
   }
 };
 
@@ -42,11 +42,13 @@ export const getOneProduct = async (req: Request, res: Response) => {
   ];
 
   try {
-    const product = await productModel.findById({ _id: id }).populate(populateQuery)
-    res.send({ productRetrieved: true, result: product});
+    const product = await productModel
+      .findById({ _id: id })
+      .populate(populateQuery);
+    res.send({ productRetrieved: true, result: product });
   } catch (err) {
     console.log(err);
-    res.send({ productRetrieved: false, err: err});
+    res.send({ productRetrieved: false, err: err });
   }
 };
 
@@ -58,20 +60,16 @@ export const deleteOneProduct = async (req: Request, res: Response) => {
       { _id: id },
       { status: "Inactive" }
     );
-    res.send({ productDeleted: true, result: product});
+    res.send({ productDeleted: true, result: product });
   } catch (err) {
     console.log(err);
-    res.send({ productDeleted: false, err:err});
+    res.send({ productDeleted: false, err: err });
   }
 };
 
 export const getAllAciveProducts = async (req: Request, res: Response) => {
   try {
-    const queryObject = { ...req.query }; 
-
-   
-    
-
+    const queryObject = { ...req.query };
 
     let finalSortedArray: any;
 
@@ -88,11 +86,10 @@ export const getAllAciveProducts = async (req: Request, res: Response) => {
     var populateQuery = [
       { path: "brand", select: "title" },
       { path: "category", select: "title" },
+      { path: "colour", select: "title" },
     ];
 
-    let query: any = productModel.find(queryObject).populate(populateQuery)
-
-    
+    let query: any = productModel.find(queryObject).populate(populateQuery);
 
     //Sort
     if (req.query.sort) {
@@ -144,14 +141,14 @@ export const getAllAciveProducts = async (req: Request, res: Response) => {
       return res.send(queryArray);
     }
 
-    let final = await query
+    let final = await query;
 
     console.log(final);
-    
+
     res.send({ productRetrieved: true, result: final });
   } catch (err) {
     console.log(err);
-    res.send({ productRetrieved: false,err:err });
+    res.send({ productRetrieved: false, err: err });
   }
 };
 
@@ -159,24 +156,28 @@ export const updateOneProduct = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   console.log(req.body);
-  const {productObject} = req.body;
-  productObject.slug = slugify(productObject.title); 
+  const { productObject } = req.body;
+  productObject.slug = slugify(productObject.title);
 
   if (req.body.title) {
     req.body.slug = slugify(req.body.title);
   }
 
   try {
-    const result = await productModel.findByIdAndUpdate({ _id: id }, productObject, {
-      new: true,
-    });
+    const result = await productModel.findByIdAndUpdate(
+      { _id: id },
+      productObject,
+      {
+        new: true,
+      }
+    );
 
     console.log(result);
 
     res.send({ productUpdated: true, result: result });
   } catch (err) {
     console.log(err);
-    res.send({ productUpdated: false, err:err});
+    res.send({ productUpdated: false, err: err });
   }
 };
 

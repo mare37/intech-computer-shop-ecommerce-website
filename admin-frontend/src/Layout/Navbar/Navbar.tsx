@@ -1,8 +1,11 @@
+import { useRef } from "react";
 import styles from "./Navbar.module.scss";
 
 import { AiOutlineMenuUnfold } from "react-icons/ai";
 import { IoIosNotifications } from "react-icons/io";
 import { ImCancelCircle } from "react-icons/im";
+
+import image from "../../assets/flowers.jpg";
 
 import { useAppSelector, useAppDispatch } from "../../hooks";
 
@@ -13,15 +16,20 @@ function Navbar() {
     (state) => state.sidebarController.value
   );
   const dispatch = useAppDispatch();
- 
+
+  const windowWidth = useRef(window.innerWidth);
+
   return (
     <div id={styles.navbar}>
       <div className={styles.nav}>
         <div className={styles.navbarlinks}>
           <AiOutlineMenuUnfold
             onClick={() => {
-              console.log(sidebar);
-              dispatch(setSiderBar());
+              // console.log(sidebar);
+              console.log("width " + window.innerWidth);
+              if (window.innerWidth <= 820) {
+                dispatch(setSiderBar());
+              }
             }}
             className={styles.menu}
           />
@@ -31,9 +39,9 @@ function Navbar() {
               <IoIosNotifications className={styles.notification} />
             </span>
 
-            <img src={"./image.jpg"} />
+            <img src={image} />
 
-            <div  className={styles.textContainer}   >
+            <div className={styles.textContainer}>
               <section className={styles.name}>Admin</section>
               <ImCancelCircle
                 onClick={() => {
