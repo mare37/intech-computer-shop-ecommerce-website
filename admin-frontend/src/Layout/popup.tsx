@@ -1,6 +1,7 @@
 import style from "./MainLayout.module.scss";
 import { useAppSelector, useAppDispatch } from "../hooks";
 import { setPopUpToFalse } from "../redux/popupSlice";
+import { setDeleteActionToTrue } from "../redux/deleteActionSlice";
 import { deleteBrand } from "../api/brand";
 import { deleteColour } from "../api/colour";
 import { deleteProductCategory } from "../api/productcatetory";
@@ -24,6 +25,7 @@ function Popup() {
     if (window.location.pathname === "/admin/brandlist") {
     
       deleteBrand(id, dispatch).then(() => {
+       
         dispatch(setPopUpToFalse());
       });
     }
@@ -65,6 +67,7 @@ function Popup() {
     
       deleteBlogCategory (id, dispatch).then(() => {
         dispatch(setPopUpToFalse());
+        dispatch(setDeleteActionToTrue())
       });
     }
 
@@ -75,7 +78,9 @@ function Popup() {
       
     
       deleteBlog(id, dispatch).then(() => {
+
         dispatch(setPopUpToFalse());
+        dispatch(setDeleteActionToTrue())
       });
     }
 

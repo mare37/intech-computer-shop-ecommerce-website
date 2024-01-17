@@ -7,6 +7,8 @@ import Sidebar from "./Sidebar/Sidebar";
 
 import Popup from "./popup";
 
+import Loading from "./Loading/loading";
+
 import { Outlet } from "react-router-dom";
 
 function MainLayout() {
@@ -17,6 +19,7 @@ function MainLayout() {
       <Sidebar />
 
       <Popup />
+      
 
     
 
