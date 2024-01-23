@@ -37,9 +37,9 @@ export const getOneColour = async (req: Request, res: Response) => {
 
   try {
     const result = await colourModel.findById({ _id: id });
-    res.send({ result: result });
+    res.send({ colourRetrieved: true, result: result });
   } catch (error) {
-    res.send({ error: error });
+    res.send({ colourRetrieved: false, error: error });
   }
 };
 
@@ -48,9 +48,9 @@ export const getAllColours = async (req: Request, res: Response) => {
 
   try {
     const result = await colourModel.find({status:"Active"});
-    res.send({ result: result });
+    res.send({ coloursRetrieved: true, result: result });
   } catch (error) {
-    res.send({ error: error });
+    res.send({ coloursRetrieved: false, error: error });
   }
 };
 

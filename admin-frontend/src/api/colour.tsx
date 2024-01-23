@@ -40,14 +40,27 @@ export const addColour = async (title: string, dispatch: any) => {
 };
 
 export const getAllColours = async (dispatch: any) => {
+
+  const setReset = ()=>{
+    dispatch(reset())
+
+  }
+
   dispatch(isLoading());
 
   try {
     const result = await axios.get(`${base_url}colour`);
 
-    //   console.log(result.data.result);
+       console.log(result);
+       if(result.data.coloursRetrieved  ){
+       // dispatch(isSuccess());
+       setTimeout(setReset, 2000);
+        return result.data
+       }else{
+        dispatch(isError());
+       }
 
-    return result.data;
+    return result.data.result
   } catch (error) {
     console.log(error);
   }

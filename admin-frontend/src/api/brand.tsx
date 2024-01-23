@@ -40,14 +40,24 @@ export const addBrand = async (title: string, dispatch: any) => {
 };
 
 export const getAllBrands = async (dispatch: any) => {
+  const setReset = ()=>{
+    dispatch(reset())
+
+  }
   dispatch(isLoading());
 
   try {
     const result = await axios.get(`${base_url}brand`);
 
-    //   console.log(result.data.result);
+       console.log(result.data);
+       if( result.data.brandsRetrieved ){
+        dispatch(reset())
+        return result.data;
+       }else{
+        dispatch(isError());
+       }
 
-    return result.data;
+   
   } catch (error) {
     console.log(error);
   }
