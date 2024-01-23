@@ -45,9 +45,9 @@ export const getAllBrands = async (req: Request, res: Response) => {
 
   try {
     const result = await brandModel.find({ status: "Active" });
-    res.send({ result: result });
+    res.send({ brandsRetrieved: true, result: result })
   } catch (error) {
-    res.send({ error: error });
+    res.send({ brandsRetrieved: true, error: error })
   }
 };
 
