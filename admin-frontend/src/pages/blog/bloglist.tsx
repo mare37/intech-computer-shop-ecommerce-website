@@ -6,13 +6,12 @@ import { ToastContainer, toast } from "react-toastify";
 import { reset, resetGettingBlogs } from "../../redux/blogSlice";
 import { setDeleteActionToFalse } from "../../redux/deleteActionSlice";
 
-
-
 import Loading from "../../Layout/Loading/loading";
 import ConnectionError from "../../Layout/ConnectionError/connectionerror";
 
 import styles from "./blog.module.scss";
 import tableStyles from "../table.module.scss";
+import { IoFileTrayOutline } from "react-icons/io5";
 import {
   useReactTable,
   getCoreRowModel,
@@ -53,7 +52,6 @@ const columns = [
 ];
 
 function BlogList() {
- 
   const [data, setData] = useState<any>([]);
   const [online, setOnline] = useState<boolean>();
   const [showError, setShowError] = useState<boolean>();
@@ -81,19 +79,11 @@ function BlogList() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-
-
-
-
-// Hide error component when page loads and internet connection exists
-useEffect(() => {
-  const timer = setTimeout(() => setShowError(true), 1500);
-  return () => clearTimeout(timer);
-}, []);
-
-
-
-
+  // Hide error component when page loads and internet connection exists
+  useEffect(() => {
+    const timer = setTimeout(() => setShowError(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (deleteAction) {
@@ -144,7 +134,7 @@ useEffect(() => {
     }
 
     if (isError) {
-       notifyError();
+      notifyError();
       dispatch(reset());
     }
   }, [isSuccess, isError]);
@@ -185,39 +175,50 @@ useEffect(() => {
                   })}
                 </section>
 
-                <section className={tableStyles.tableData}>
-                  {table.getRowModel().rows.map((row) => (
-                    <div className={tableStyles.dataContainer} key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <div className={tableStyles.data} key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                {data.length === 0 ? (
+                  <div className={tableStyles.noData}>
+                    {" "}
+                    <IoFileTrayOutline
+                      className={tableStyles.doDataIcon}
+                    />{" "}
+                    <p>No data</p>{" "}
+                  </div>
+                ) : (
+                  <section className={tableStyles.tableData}>
+                    {table.getRowModel().rows.map((row) => (
+                      <div className={tableStyles.dataContainer} key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <div className={tableStyles.data} key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                        <div className={tableStyles.data}>
+                          <BiEditAlt
+                            onClick={() => {
+                              navigate(`/admin/updateblog/${row.original._id}`);
+                            }}
+                            className={tableStyles.edit}
+                            size={30}
+                          />
+                          <BiSolidTrashAlt
+                            onClick={() => {
+                              dispatch(setPopUpToTrue());
+                              dispatch(setId({ id: row.original._id }));
+                              // setDeleteButton(true)
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                            className={tableStyles.trash}
+                            size={30}
+                          />
                         </div>
-                      ))}
-                      <div className={tableStyles.data}>
-                        <BiEditAlt
-                          onClick={() => {
-                            navigate(`/admin/updateblog/${row.original._id}`);
-                          }}
-                          className={tableStyles.edit}
-                          size={30}
-                        />
-                        <BiSolidTrashAlt
-                          onClick={() => {
-                            dispatch(setPopUpToTrue());
-                            dispatch(setId({ id: row.original._id }));
-                            // setDeleteButton(true)
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }}
-                          className={tableStyles.trash}
-                          size={30}
-                        />
                       </div>
-                    </div>
-                  ))}
-                </section>
+                    ))}
+                  </section>
+                )}
+
                 <br />
 
                 <section>
@@ -243,8 +244,10 @@ useEffect(() => {
             </div>
           </div>
         )
+      ) : showError ? (
+        <ConnectionError />
       ) : (
-        showError ? <ConnectionError />: ""
+        ""
       )}
     </div>
   );

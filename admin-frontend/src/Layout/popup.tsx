@@ -27,6 +27,7 @@ function Popup() {
       deleteBrand(id, dispatch).then(() => {
        
         dispatch(setPopUpToFalse());
+        dispatch(setDeleteActionToTrue())
       });
     }
 
@@ -37,6 +38,7 @@ function Popup() {
     
       deleteColour(id, dispatch).then(() => {
         dispatch(setPopUpToFalse());
+        dispatch(setDeleteActionToTrue())
       });
     }
 
@@ -57,6 +59,7 @@ function Popup() {
     
       deleteProduct (id, dispatch).then(() => {
         dispatch(setPopUpToFalse());
+        dispatch(setDeleteActionToTrue())
       });
     }
 

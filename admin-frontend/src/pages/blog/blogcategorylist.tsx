@@ -5,6 +5,7 @@ import Loading from "../../Layout/Loading/loading";
 import ConnectionError from "../../Layout/ConnectionError/connectionerror";
 import styles from "./blog.module.scss";
 import tableStyles from "../table.module.scss";
+import { IoFileTrayOutline } from "react-icons/io5";
 import { ToastContainer, toast } from "react-toastify";
 
 import { setDeleteActionToFalse } from "../../redux/deleteActionSlice";
@@ -76,7 +77,6 @@ function BlogCategoryList() {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
-
 
   // Hide error component when page loads and internet connection exists
   useEffect(() => {
@@ -176,41 +176,52 @@ function BlogCategoryList() {
                   })}
                 </section>
 
-                <section className={tableStyles.tableData}>
-                  {table.getRowModel().rows.map((row) => (
-                    <div className={tableStyles.dataContainer} key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <div className={tableStyles.data} key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                {data.length === 0 ? (
+                  <div className={tableStyles.noData}>
+                    {" "}
+                    <IoFileTrayOutline
+                      className={tableStyles.doDataIcon}
+                    />{" "}
+                    <p>No data</p>{" "}
+                  </div>
+                ) : (
+                  <section className={tableStyles.tableData}>
+                    {table.getRowModel().rows.map((row) => (
+                      <div className={tableStyles.dataContainer} key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <div className={tableStyles.data} key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                        <div className={tableStyles.data}>
+                          <BiEditAlt
+                            onClick={() => {
+                              navigate(
+                                `/admin/updateblogcategory/${row.original._id}`
+                              );
+                            }}
+                            className={tableStyles.edit}
+                            size={30}
+                          />
+                          <BiSolidTrashAlt
+                            onClick={() => {
+                              dispatch(setPopUpToTrue());
+                              dispatch(setId({ id: row.original._id }));
+                              // setDeleteButton(true)
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                            className={tableStyles.trash}
+                            size={30}
+                          />
                         </div>
-                      ))}
-                      <div className={tableStyles.data}>
-                        <BiEditAlt
-                          onClick={() => {
-                            navigate(
-                              `/admin/updateblogcategory/${row.original._id}`
-                            );
-                          }}
-                          className={tableStyles.edit}
-                          size={30}
-                        />
-                        <BiSolidTrashAlt
-                          onClick={() => {
-                            dispatch(setPopUpToTrue());
-                            dispatch(setId({ id: row.original._id }));
-                            // setDeleteButton(true)
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }}
-                          className={tableStyles.trash}
-                          size={30}
-                        />
                       </div>
-                    </div>
-                  ))}
-                </section>
+                    ))}
+                  </section>
+                )}
+
                 <br />
 
                 <section>
@@ -236,8 +247,10 @@ function BlogCategoryList() {
             </div>
           </div>
         )
+      ) : showError ? (
+        <ConnectionError />
       ) : (
-          showError ? <ConnectionError />: ""
+        ""
       )}
     </div>
   );
