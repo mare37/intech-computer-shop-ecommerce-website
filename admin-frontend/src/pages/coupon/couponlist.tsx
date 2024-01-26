@@ -1,6 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./coupon.module.scss";
-import tableStyles from "../table.module.scss"
+import { useNavigate } from "react-router-dom";
+import isOnline from "is-online";
+import Loading from "../../Layout/Loading/loading";
+import ConnectionError from "../../Layout/ConnectionError/connectionerror";
+import { setDeleteActionToFalse } from "../../redux/deleteActionSlice";
+import tableStyles from "../table.module.scss";
+import { useAppSelector, useAppDispatch } from "../../hooks";
+import { setPopUpToTrue } from "../../redux/popupSlice";
+import { setId } from "../../redux/popupSlice";
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,62 +16,65 @@ import {
   createColumnHelper,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import type { ColumnDef } from "@tanstack/react-table";
+
+import { getAllCoupons } from "../../api/coupon";
 
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { BiEditAlt } from "react-icons/bi";
 
-
-const DATA = [
-  {
-    sNo: 1,
-    title: "4HQV",
-    discount: 5,
-    expiry: "6/6/2023"
-  },
-  {
-    sNo: 2,
-    title: "4HQV",
-    discount: 5,
-    expiry: "6/6/2023"
-  },
- 
-];
-
-type Coupon= {
-  sNo: number;
-  title: string;
-  discount:number,
-  expiry:string
-
+type Coupon = {
+  _id: string;
+  name: string;
+  discount: number;
+  expiry: string;
 };
 
 const columnHelper = createColumnHelper<Coupon>();
 
-
-
 const columns = [
-  columnHelper.accessor("sNo", {
+  columnHelper.accessor("_id", {
     header: "Serial No.",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      if (info.row.original._id.length > 5) {
+        return info.row.original._id.slice(0, 8) + "...";
+      }
+    },
   }),
-  columnHelper.accessor("title", {
+  columnHelper.accessor("name", {
     header: "Name",
     cell: (info) => info.getValue(),
   }),
 
   columnHelper.accessor("discount", {
     header: "Discount",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      return info.row.original.discount + "%";
+    },
   }),
   columnHelper.accessor("expiry", {
     header: "Expiry",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      const dateObject = new Date(info.row.original.expiry);
+      const date = dateObject.toLocaleString("en-UK", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      return date;
+    },
   }),
 ];
 
 function CouponList() {
-  const [data, setData] = useState(DATA);
+  const [online, setOnline] = useState<boolean>();
+  const [showError, setShowError] = useState<boolean>();
+  const [data, setData] = useState<any>([]);
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const { isLoading } = useAppSelector((state) => state.coupon);
+  const { deleteAction } = useAppSelector((state) => state.deleteAction);
 
   const table = useReactTable({
     data,
@@ -72,73 +83,143 @@ function CouponList() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  console.log(table.getRowModel().rows);
+  // Hide error component when page loads and internet connection exists
+  useEffect(() => {
+    const timer = setTimeout(() => setShowError(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (deleteAction) {
+      getAllCoupons(dispatch)
+        .then((response) => {
+          setData(response.result.reverse());
+          dispatch(setDeleteActionToFalse());
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [deleteAction]);
+
+  useEffect(() => {
+    //First we check if there is an internet connection
+    isOnline()
+      .then((response: boolean) => {
+        setOnline(response);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    getAllCoupons(dispatch)
+      .then((response) => {
+        console.log(response);
+        setData(response.result.reverse());
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
-    <div className={styles.coupon}>
-      <div className={styles.couponContainer}>
-        <div className={tableStyles.table}>
-          <h1>Coupons</h1>
-          <section>
-            {table.getHeaderGroups().map((headerGroup) => {
-              return (
-                <div key={headerGroup.id} className={tableStyles.headerContainer}>
-                  {headerGroup.headers.map((header) => {
+    <div>
+      {online ? (
+        isLoading ? (
+          <Loading />
+        ) : (
+          <div className={styles.coupon}>
+            <div className={styles.couponContainer}>
+              <div className={tableStyles.table}>
+                <h1  className={tableStyles.heading}   >Coupons</h1>
+                <section   className={tableStyles.boxShadow }        >
+                  {table.getHeaderGroups().map((headerGroup) => {
                     return (
-                      <div key={header.id} className={tableStyles.header}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      <div
+                        key={headerGroup.id}
+                        className={tableStyles.headerContainer}
+                      >
+                        {headerGroup.headers.map((header) => {
+                          return (
+                            <div key={header.id} className={tableStyles.header}>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </div>
+                          );
+                        })}
+                        <div className={tableStyles.header}>Action</div>
                       </div>
                     );
                   })}
-                  <div className={tableStyles.header}>Action</div>
-                </div>
-              );
-            })}
-          </section>
+                </section>
 
-          <section className={tableStyles.tableData}>
-            {table.getRowModel().rows.map((row) => (
-              <div className={tableStyles.dataContainer} key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <div className={tableStyles.data} key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </div>
-                ))}
-                <div className={tableStyles.data}>
-                  <BiEditAlt className={tableStyles.edit} size={30} />
-                  <BiSolidTrashAlt className={tableStyles.trash} size={30} />
+                <section className={tableStyles.boxShadow }>
+                  {table.getRowModel().rows.map((row) => (
+                    <div className={tableStyles.dataContainer} key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <div className={tableStyles.data} key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </div>
+                      ))}
+                      <div className={tableStyles.data}>
+                        <BiEditAlt
+                          className={tableStyles.edit}
+                          size={30}
+                          onClick={() => {
+                            navigate(`/admin/updatecoupon/${row.original._id}`);
+                          }}
+                        />
+                        <BiSolidTrashAlt
+                          className={tableStyles.trash}
+                          size={30}
+                          onClick={() => {
+                            dispatch(setPopUpToTrue());
+                            dispatch(setId({ id: row.original._id }));
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </section>
+                <br />
+
+                <section>
+                  Page {table.getState().pagination.pageIndex + 1} of{" "}
+                  {table.getPageCount()}
+                </section>
+                <br />
+                <div className={tableStyles.navigatepages}>
+                  <button
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                  >
+                    {"<"}
+                  </button>
+                  <button
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                  >
+                    {">"}
+                  </button>
                 </div>
               </div>
-            ))}
-          </section>
-          <br />
-
-          <section>
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </section>
-          <br />
-          <div className={tableStyles.navigatepages}>
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {"<"}
-            </button>
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              {">"}
-            </button>
+            </div>
           </div>
-        </div>
-      </div>
+        )
+      ) : showError ? (
+        <ConnectionError />
+      ) : (
+        ""
+      )}
     </div>
   );
 }
 
-export default CouponList
+export default CouponList;

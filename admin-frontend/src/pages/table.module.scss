@@ -3,11 +3,23 @@
 
    
    
-    padding: 29px 10%
+    padding: 29px 10%;
+    min-width: 700px;
+
+    .boxShadow{
+          box-shadow: 0 4px 8px 0 rgba(207, 203, 203, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);    
+    }
+   
 
    
  
   
+}
+
+
+.heading{
+
+    margin-bottom: 40px;
 }
 
 .noData{
@@ -76,20 +88,33 @@ color:gray;
 .header{
     display: inline-block;
     width: 33.333%;
-
-  
-    
-
+    margin-left: 10px;
 }
+
+.discount{
+    display: inline-block;
+    width: 23.333%;
+    margin-left: 10px;
+}
+
+.discountData{
+    display: inline-block;
+    width: 23.333%;
+    margin-left: 10px;
+}
+
 
 .data{
     display: inline-block;
     width: 33.333%;
+    margin-left: 10px;
 
 }
 
 
 .tableData{
+
+  
   
 
 
@@ -126,6 +151,27 @@ color:gray;
      display: block;
 
     }
+
+
+    .loader {
+        width: 35px;
+        height: 35px;
+        border: 5px dotted #706e6e;
+        border-radius: 50%;
+        display: inline-block;
+        position: relative;
+        box-sizing: border-box;
+        animation: rotation 2s linear infinite;
+      }
+      
+      @keyframes rotation {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      } 
 
 
 

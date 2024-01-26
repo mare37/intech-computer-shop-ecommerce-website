@@ -26,9 +26,9 @@ export const deleteCoupon = async (req: Request, res: Response) => {
       { status: "Inactive" },
       { new: true }
     );
-    res.send({couponDeleted: true, result: result });
+    res.send({couponRemoved: true, result: result });
   } catch (error) {
-    res.send({couponDeleted: false, error: error });
+    res.send({couponRemoved: false, error: error });
   }
 };
 
@@ -48,9 +48,9 @@ export const getAllCoupons = async (req: Request, res: Response) => {
 
   try {
     const result = await couponModel.find({status:"Active"});
-    res.send({ result: result });
+    res.send({ couponsRetrieved: true, result: result });
   } catch (error) {
-    res.send({ error: error });
+    res.send({ couponsRetrieved: false, error: error });
   }
 };
 

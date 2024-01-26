@@ -148,7 +148,7 @@ function AddProduct() {
             data["description"] = description;
             addProduct(data, dispatch).then((response)=>{
               console.log(response);
-              if(response.productCreated ){
+              if(response.productCreated ){ 
                 notify()
               }else{
                 notifyError()
