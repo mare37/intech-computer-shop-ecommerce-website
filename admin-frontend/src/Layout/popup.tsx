@@ -8,6 +8,7 @@ import { deleteProductCategory } from "../api/productcatetory";
 import { deleteProduct } from "../api/product";
 import { deleteBlogCategory } from "../api/blogcategory";
 import { deleteBlog } from "../api/blog";
+import { removeCoupon } from "../api/coupon";
 import { useState } from "react";
 
 function Popup() {
@@ -82,6 +83,21 @@ function Popup() {
     
       deleteBlog(id, dispatch).then(() => {
 
+        dispatch(setPopUpToFalse());
+        dispatch(setDeleteActionToTrue())
+      });
+    }
+
+
+    if (window.location.pathname === "/admin/couponlist") {
+
+      console.log("DELETING");
+     
+      
+    
+      removeCoupon(id, dispatch).then(() => {
+        console.log(id);
+      
         dispatch(setPopUpToFalse());
         dispatch(setDeleteActionToTrue())
       });

@@ -7,7 +7,9 @@ import productCategoryReducer from "./redux/productcategorySlice"
 import productReducer from "./redux/productSlice"
 import blogCategoryReducer from "./redux/blogcategorySlice"
 import blogReducer from "./redux/blogSlice"
+import couponReducer from "./redux/couponSlice"
 import deleteActionReducer from "./redux/deleteActionSlice"
+
 
 
 
@@ -22,7 +24,8 @@ export const store = configureStore({
         product: productReducer,
         blogCategory: blogCategoryReducer,
         blog: blogReducer,
-        deleteAction:deleteActionReducer
+        deleteAction:deleteActionReducer,
+        coupon: couponReducer
      
     }
   })

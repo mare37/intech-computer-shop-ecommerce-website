@@ -12,11 +12,11 @@ import {
   getOneCoupon
 } from "../controllers/couponController";
 
-router.post("/", validateToken, isAdmin, createCoupon);
-router.delete("/:id", validateToken, isAdmin, deleteCoupon);
-router.put("/:id", validateToken, isAdmin, updateCoupon);
-router.get("/", validateToken, isAdmin, getAllCoupons);
-router.get("/:id", validateToken, isAdmin, getOneCoupon);
+router.post("/",  createCoupon);
+router.delete("/:id", deleteCoupon);
+router.put("/:id", updateCoupon);
+router.get("/",  getAllCoupons);
+router.get("/:id", getOneCoupon);
 
 
 export default router;

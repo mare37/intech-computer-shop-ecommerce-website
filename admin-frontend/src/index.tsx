@@ -24,6 +24,7 @@ import AddBlogCategory from "./pages/blog/addblogcategory";
 import BlogCategoryList from "./pages/blog/blogcategorylist";
 import BlogList from "./pages/blog/bloglist";
 import AddCoupon from "./pages/coupon/addcoupon";
+import UpdateCoupon from "./pages/coupon/updatecoupon";
 import CouponList from "./pages/coupon/couponlist";
 import Orders from "./pages/orders/orders";
 import Enquiries from "./pages/enquiries/enquiries";
@@ -117,6 +118,10 @@ const router = createBrowserRouter([
       {
         path: "addcoupon",
         element: < AddCoupon />,
+      },
+      {
+        path: "updatecoupon/:id",
+        element: < UpdateCoupon />,
       },
       {
         path: "couponlist",

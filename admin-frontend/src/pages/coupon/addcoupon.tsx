@@ -1,10 +1,15 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useAppSelector, useAppDispatch } from "../../hooks";
 import voucher_codes, { generate } from "voucher-code-generator";
-
+import { ToastContainer, toast } from "react-toastify";
 import styles from "./coupon.module.scss";
+import tableStyles from "../table.module.scss"
 import { useState } from "react";
+
+import { addCoupon } from "../../api/coupon";
+import { response } from "express";
 
 const schema = yup.object().shape({
   coupon: yup.string().required(),
@@ -16,6 +21,18 @@ function AddCoupon() {
   const [coupon, setCoupon] = useState("");
   const [prefix, setPrefix] = useState("");
   const [postfix, setPostfix] = useState("");
+
+  const dispatch = useAppDispatch();
+  const { isLoading, isError, isSuccess } = useAppSelector(
+    (state) => state.coupon
+  );
+
+  const notify = () => toast.success("Coupon Added Successfully!");
+
+  const notifyError = () => toast.error("Failed to add coupon!");
+
+  const notifyLoadError = () =>
+    toast.error("Failed to load coupon!", { autoClose: false });
 
   const {
     register,
@@ -39,27 +56,49 @@ function AddCoupon() {
 
   return (
     <div
-      onSubmit={handleSubmit((data) => console.log(data))}
+      onSubmit={handleSubmit((data) => {
+        console.log(data);
+
+        addCoupon(data.coupon, data.date, data.discount, dispatch).then(
+          (response) => {
+            if (response.couponCreated) {
+              notify();
+            } else {
+              notifyError();
+            }
+          }
+        );
+      })}
       className={styles.coupon}
     >
       <div className={styles.couponContainer}>
-        <div className={styles.firstSection}         >
-         {" "}
+        <ToastContainer theme="light" position="top-center" />
+        <div className={styles.firstSection}>
+          <h3>Add Coupon</h3>
           <span>
-            <input   onChange={(e)=>{setPrefix(e.target.value)}}           placeholder="Prefix" />
-            <input    onChange={(e)=>{setPostfix(e.target.value)}}               placeholder="Postfix" />
+            <input
+              onChange={(e) => {
+                setPrefix(e.target.value);
+              }}
+              placeholder="Prefix"
+            />
+            <input
+              onChange={(e) => {
+                setPostfix(e.target.value);
+              }}
+              placeholder="Postfix"
+            />
           </span>{" "}
           <button onClick={generateCoupon}>Generate Coupon Code</button>
-          <p>{coupon.length === 0 ? "Generated coupon code will be displayed here" : coupon}</p>
+          <p>
+            {coupon.length === 0
+              ? "Generated coupon code will be displayed here"
+              : coupon}
+          </p>
         </div>
 
         <form>
-          <h3>Add Coupon</h3>
-
-          <input
-            {...register("coupon")}
-            placeholder="Enter coupon"
-          />
+          <input {...register("coupon")} placeholder="Enter coupon" />
           {errors.coupon && <p>Coupon is required.</p>}
           <input
             type="date"
@@ -73,7 +112,14 @@ function AddCoupon() {
             placeholder="Enter  discount"
           />
           {errors.discount && <p>Discount is required.</p>}
-          <button>Add Coupon</button>
+          <div>
+            {" "}
+            <button disabled={isLoading}>Add Coupon</button>
+            {isLoading  ?  <span className={tableStyles.loader}></span>: ""   }
+          
+           
+          </div>
+
         </form>
       </div>
     </div>
