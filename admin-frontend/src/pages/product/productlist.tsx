@@ -175,10 +175,10 @@ function ProductList() {
         ) : (
           <div className={styles.product}>
             <ToastContainer theme="light" />
-            <div className={styles.productContainer}>
+            <div className={   `${styles.productContainer}     ${tableStyles.verticalScroll}`             }>
               <div className={tableStyles.table}>
                 <h1>Products</h1>
-                <section>
+                <section       className={tableStyles.boxShadow }      >
                   {table.getHeaderGroups().map((headerGroup) => {
                     return (
                       <div
@@ -204,7 +204,7 @@ function ProductList() {
                 {data.length === 0 ? (
                   <div className={tableStyles.noData}  > <IoFileTrayOutline  className={tableStyles.doDataIcon} />  <p>No data</p>   </div>
                 ) : (
-                  <section className={tableStyles.tableData}>
+                  <section  className={tableStyles.boxShadow }>
                     {table.getRowModel().rows.map((row) => (
                       <div className={tableStyles.dataContainer} key={row.id}>
                         {row.getVisibleCells().map((cell) => (
