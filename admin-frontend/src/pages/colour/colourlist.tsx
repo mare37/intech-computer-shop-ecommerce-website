@@ -137,11 +137,11 @@ function ColourList() {
           <Loading />
         ) : (
           <div className={styles.addcolor}>
-            <div className={styles.addcolorContainer}>
+            <div className={      `${styles.addcolorContainer}    ${tableStyles.verticalScroll} `                    }>
               <ToastContainer theme="light" />
               <div className={tableStyles.table}>
-                <h1>Colours</h1>
-                <section>
+                <h1   className={tableStyles.heading}                      >Colours</h1>
+                <section    className={tableStyles.boxShadow }      >
                   {table.getHeaderGroups().map((headerGroup) => {
                     return (
                       <div
@@ -173,7 +173,7 @@ function ColourList() {
                     <p>No data</p>{" "}
                   </div>
                 ) : (
-                  <section className={tableStyles.tableData}>
+                  <section className={tableStyles.boxShadow}>
                     {table.getRowModel().rows.map((row) => (
                       <div className={tableStyles.dataContainer} key={row.id}>
                         {row.getVisibleCells().map((cell) => (

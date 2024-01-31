@@ -141,11 +141,11 @@ function BrandList() {
           <Loading />
         ) : (
           <div className={styles.addbrand}>
-            <div className={styles.addbrandContainer}>
+            <div className={  `${styles.addbrandContainer}    ${tableStyles.verticalScroll}     `    }                 >
               <ToastContainer theme="light" />
-              <div className={styles.table}>
-                <h1>Brands</h1>
-                <section>
+              <div className={tableStyles.table}>
+                <h1      className={tableStyles.heading}            >Brands</h1>
+                <section    className={tableStyles.boxShadow }        >
                   {table.getHeaderGroups().map((headerGroup) => {
                     return (
                       <div
@@ -171,7 +171,7 @@ function BrandList() {
                 {data.length === 0 ? (
                    <div className={tableStyles.noData}  > <IoFileTrayOutline  className={tableStyles.doDataIcon} />  <p>No data</p>   </div>
                 ) : (
-                  <section className={styles.tableData}>
+                  <section  className={tableStyles.boxShadow}>
                     {table.getRowModel().rows.map((row) => (
                       <div className={styles.dataContainer} key={row.id}>
                         {row.getVisibleCells().map((cell) => (

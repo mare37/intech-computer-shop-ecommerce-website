@@ -151,8 +151,8 @@ function BlogList() {
             <ToastContainer theme="light" />
             <div className={styles.blogContainer}>
               <div className={tableStyles.table}>
-                <h1>Blogs</h1>
-                <section>
+                <h1      className={tableStyles.heading}            >Blogs</h1>
+                <section   className={tableStyles.boxShadow }            >
                   {table.getHeaderGroups().map((headerGroup) => {
                     return (
                       <div
@@ -184,7 +184,7 @@ function BlogList() {
                     <p>No data</p>{" "}
                   </div>
                 ) : (
-                  <section className={tableStyles.tableData}>
+                  <section className={tableStyles.boxShadow }>
                     {table.getRowModel().rows.map((row) => (
                       <div className={tableStyles.dataContainer} key={row.id}>
                         {row.getVisibleCells().map((cell) => (
