@@ -49,12 +49,16 @@ export const getAllCoupons = async (dispatch: any) => {
     console.log(result.data);
     if (result.data.couponsRetrieved) {
       dispatch(reset());
-      return result.data;
+     
     } else {
       dispatch(isError());
     }
+    return result.data;
   } catch (error) {
     console.log(error);
+    dispatch(reset());
+    return {couponsRetrieved: false}
+   
   }
 };
 
