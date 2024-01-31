@@ -30,8 +30,9 @@ export const addBlogCategory = async (title: string, dispatch: any) => {
     } else {
       dispatch(isError());
     }
-
     console.log(result.data);
+    return result.data
+   
   } catch (error) {
     dispatch(isError());
 
@@ -52,6 +53,9 @@ export const getAllBlogCategories = async (dispatch: any) => {
   try {
     const result = await axios.get(`${base_url}blog-category`);
 
+    console.log(result);
+    
+
     if (result.data.blogCatRetrieved) {
     
       dispatch(isSuccess());
@@ -61,13 +65,16 @@ export const getAllBlogCategories = async (dispatch: any) => {
      
        
         
-       return result.data.result;
+   
       } else {
         dispatch(isError());
+       
       }
-    return result.data.result;
+  return result.data;
   } catch (error) {
     console.log(error);
+    dispatch(reset())
+    return {blogCatRetrieved: false} 
   }
 };
 
@@ -119,6 +126,8 @@ export const updateBlogCategory = async (
     } else {
       dispatch(isError());
     }
+
+    return result.data
   } catch (error) {
     console.log(error);
 

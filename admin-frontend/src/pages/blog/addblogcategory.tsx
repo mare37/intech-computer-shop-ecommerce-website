@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import { ToastContainer, toast } from "react-toastify";
 
 import styles from "./blog.module.scss";
 import tableStyles from "../table.module.scss";
@@ -24,7 +25,9 @@ function AddBlogCategory() {
 
   const { id } = useParams();
   const dispatch = useAppDispatch();
-  const { isSuccess, isError } = useAppSelector((state) => state.blogCategory);
+  const { isSuccess, isError, isLoading } = useAppSelector(
+    (state) => state.blogCategory
+  );
 
   const {
     register,
@@ -33,6 +36,21 @@ function AddBlogCategory() {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const notify = () => toast.success("Blog category posted Successfully!");
+
+  const notifyError = () =>
+    toast.error("Failed to post blog category!", { autoClose: false });
+  const notifyLoadError = () =>
+    toast.error("You are offline! Check your connection");
+
+  const notifyServerError = () => toast.error("Something went wrong!");
+
+  //update notifications
+  const notifyUpdate = () =>
+    toast.success("Blog category updated Successfully!");
+  const notifyUpdateError = () =>
+    toast.error("Failed to update blog category!", { autoClose: false });
 
   useEffect(() => {
     if (id != undefined) {
@@ -54,36 +72,51 @@ function AddBlogCategory() {
     <div
       onSubmit={handleSubmit((data) => {
         if (id === undefined) {
-          addBlogCategory(data.title, dispatch);
+          addBlogCategory(data.title, dispatch).then((response) => {
+            console.log(response);
+            if (response.blogCatCreated) {
+              notify();
+            } else {
+              notifyError();
+            }
+          });
         } else {
           setBlogCatRetreival(false);
-          updateBlogCategory(id, blogCategory, dispatch);
+          updateBlogCategory(id, blogCategory, dispatch).then((response) => {
+            console.log(response);
+            if (response.blogCatUpdated) {
+              notifyUpdate();
+            } else {
+              notifyUpdateError();
+            }
+          });
         }
       })}
       className={styles.blog}
     >
       <div className={styles.blogContainer}>
+        <ToastContainer theme="light" position="top-center" />
         <form>
           <h3>{id === undefined ? "Add" : "Edit"} Blog Category</h3>
           <input
             value={blogCategory}
             {...register("title")}
             placeholder=""
-            onChange={(e)=>{setBlogCategory(e.target.value)}}
-          
+            onChange={(e) => {
+              setBlogCategory(e.target.value);
+            }}
           />
           {errors.title && <p>Blog category is required.</p>}
-          <button>{id === undefined ? "Add" : "Edit"} blog category</button>
-          {isSuccess === true && blogCatRetreival === false && (
-            <span className={tableStyles.success}>
-              Blog category {id !== undefined ? "updated" : "created"} successfully.
-            </span>
-          )}
-          {isError && (
-            <span className={tableStyles.error}>
-              Something went wrong.Try again
-            </span>
-          )}
+
+          <div className={tableStyles.buttonAndLoaderContainer}>
+            <button
+              className={tableStyles.universalButton}
+              disabled={isLoading}
+            >
+              {id === undefined ? "Add" : "Edit"} blog category
+            </button>
+            {isLoading ? <span className={tableStyles.loader}></span> : ""}
+          </div>
         </form>
       </div>
     </div>

@@ -3,8 +3,9 @@ import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import { ToastContainer, toast } from "react-toastify";
+
 
 import {
   addProductCategory,
@@ -37,6 +38,10 @@ function ProductCategory() {
     resolver: yupResolver(schema),
   });
 
+
+  const notify = () => toast.success("Product Category added Successfully!");
+  const notifyError = () => toast.error("Failed to add Product Category!");
+
   useEffect(() => {
     if (id != undefined) {
       getOneProductCategory(id, dispatch)
@@ -58,7 +63,15 @@ function ProductCategory() {
       onSubmit={handleSubmit((data) => {
         if (id === undefined) {
         
-          addProductCategory(data.productCategory, dispatch);
+          addProductCategory(data.productCategory, dispatch).then((response )=>{
+             if(response.productCatCreated){
+              notify()
+
+             }else{
+              notifyError()
+             }
+            
+          })
         } else {
           setProductCatRetrieval(false);
           updateProductCategory(id, productCategory, dispatch);
@@ -67,6 +80,7 @@ function ProductCategory() {
       className={styles.addProductCategory}
     >
       <div className={styles.addProductCategoryContainer}>
+      <ToastContainer theme="light"   position="top-center"/>
         <form>
           <h3>{id === undefined ? "Add" : "Edit"} product category</h3>
           <input
@@ -77,18 +91,18 @@ function ProductCategory() {
             }}
           />
           {errors.productCategory && <p>Product category is required.</p>}
-          <button>{id === undefined ? "Add" : "Edit"}</button>
-          {isSuccess === true && productCatRetrieval === false && (
-            <span className={tableStyles.success}>
-              Product category {id !== undefined ? "updated" : "created"}{" "}
-              successfully.
-            </span>
-          )}
-          {isError && (
-            <span className={tableStyles.error}>
-              Something went wrong.Try again
-            </span>
-          )}
+         
+
+          <div className={tableStyles.buttonAndLoaderContainer}>
+            <button
+              className={tableStyles.universalButton}
+              disabled={isLoading}
+            >
+              {id === undefined ? "Add" : "Edit"}
+            </button>
+            {isLoading ? <span className={tableStyles.loader}></span> : ""}
+          </div>
+          
         </form>
       </div>
     </div>

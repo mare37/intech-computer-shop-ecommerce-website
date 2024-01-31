@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useAppSelector, useAppDispatch } from "../../hooks";
+import { ToastContainer, toast } from "react-toastify";
+
+import tableStyles from "../table.module.scss"
 import styles from "./addbrand.module.scss";
 
 import { getOneBrand, updateBrand } from "../../api/brand";
@@ -23,6 +26,11 @@ function UpdateBrand() {
   );
 
   const { id } = useParams();
+
+
+  const notify = () => toast.success("Brand updated Successfully!");
+ const notifyError = () => toast.error("Failed to update brand!");
+
 
   useEffect(() => {
     if (id) {
@@ -51,16 +59,28 @@ function UpdateBrand() {
       onSubmit={handleSubmit(() => {
         if (id) {
             setBrandRetreival(false)
-          updateBrand(id, brand, dispatch);
+          updateBrand(id, brand, dispatch).then((response)=>{
+            console.log(response);
+
+            if(response.brandUpdated ){
+              notify()
+            }else{
+              notifyError()
+
+            }
+            
+          })
         
         }
       })}
       className={styles.addbrand}
     >
       <div className={styles.addbrandContainer}>
+      <ToastContainer theme="light"   position="top-center"/>
+
         <form>
           <h3>Update Brand</ h3>
-          {isLoading && <p>Loading...</p>}
+          
           <input
             value={brand}
             {...register("brand")}
@@ -70,13 +90,19 @@ function UpdateBrand() {
             placeholder={""}
           />
           {errors.brand && <p>Brand is required.</p>}
-          <button disabled={isLoading}>Update brand</button>
-          {(isSuccess === true  && brandRetreival === false) && (
-            <span className={styles.success}>Brand Updated successfully.</span>
-          )}
-          {isError && (
-            <span className={styles.error}>Something went wrong.Try again</span>
-          )}
+       
+
+
+          <div className={tableStyles.buttonAndLoaderContainer}>
+            <button
+              className={tableStyles.universalButton}
+              disabled={isLoading}
+            >
+             Update brand
+            </button>
+            {isLoading ? <span className={tableStyles.loader}></span> : ""}
+          </div>
+        
         </form>
       </div>
     </div>

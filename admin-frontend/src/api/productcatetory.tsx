@@ -30,7 +30,8 @@ export const addProductCategory = async (title: string, dispatch: any) => {
       dispatch(isError());
     }
 
-    console.log(result.data);
+    return result.data
+    
   } catch (error) {
     dispatch(isError());
 
@@ -74,6 +75,7 @@ export const deleteProductCategory = async (id: string, dispatch: any) => {
     } else {
       dispatch(isError());
     }
+    return result.data
   } catch (error) {
     dispatch(isError());
 

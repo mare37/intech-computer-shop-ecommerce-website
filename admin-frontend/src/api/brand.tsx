@@ -32,6 +32,7 @@ export const addBrand = async (title: string, dispatch: any) => {
     }
     setTimeout(setReset, 2000);
     console.log(result.data);
+    return result.data
   } catch (error) {
     dispatch(isError());
 
@@ -105,7 +106,7 @@ export const updateBrand = async(id:string,title:string,dispatch:any) =>{
     }
 
    
-    
+    return result.data
 
   }catch(error){
     console.log(error);
