@@ -130,7 +130,7 @@ function WriteBlog() {
             }
           })}
         >
-          <h3>Write blog</h3>
+          <h3  className={tableStyles.heading }   >Write blog</h3>
           <input {...register("title")} placeholder="Enter blog title" />
           {errors.title && <p>Title is required.</p>}
 

@@ -41,10 +41,11 @@ function AddBlogCategory() {
 
   const notifyError = () =>
     toast.error("Failed to post blog category!", { autoClose: false });
-  const notifyLoadError = () =>
-    toast.error("You are offline! Check your connection");
+  //const notifyLoadError = () =>
+  //  toast.error("You are offline! Check your connection");
 
   const notifyServerError = () => toast.error("Something went wrong!");
+  const notifyLoadError = () => toast.error("Something went wrong!", { autoClose: false   });
 
   //update notifications
   const notifyUpdate = () =>
@@ -56,12 +57,17 @@ function AddBlogCategory() {
     if (id != undefined) {
       getOneBlogCategory(id, dispatch)
         .then((response) => {
-          console.log(response.result);
-          setBlogCatRetreival(true);
-          setBlogCategory(response.result.title);
+          console.log(response);
+          if( response.blogCatRetrieved ){
+            setBlogCatRetreival(true);
+            setBlogCategory(response.result.title);
+          }else{
+            notifyLoadError()
+          }
+         
         })
         .catch((error) => {
-          setBlogCatRetreival(false);
+          setBlogCatRetreival(false); 
         });
     }
 
@@ -97,7 +103,7 @@ function AddBlogCategory() {
       <div className={styles.blogContainer}>
         <ToastContainer theme="light" position="top-center" />
         <form>
-          <h3>{id === undefined ? "Add" : "Edit"} Blog Category</h3>
+          <h3  className={tableStyles.heading}    >{id === undefined ? "Add" : "Edit"} Blog Category</h3>
           <input
             value={blogCategory}
             {...register("title")}

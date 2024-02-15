@@ -37,9 +37,9 @@ export const getOneBlogCat = async (req: Request, res: Response) => {
 
   try {
     const result = await blogCatModel.findById({ _id: id });
-    res.send({ result: result });
+    res.send({blogCatRetrieved: true, result: result }); 
   } catch (error) {
-    res.send({ error: error });
+    res.send({blogCatRetrieved: false, error: error }); 
   }
 };
 
@@ -50,6 +50,8 @@ export const getAllBlogCat = async (req: Request, res: Response) => {
     const result = await blogCatModel.find({status: "Active"});
     res.send({blogCatRetrieved: true, result: result }); 
   } catch (error) {
+    console.log(error);
+    
     res.send({ error: error });
   }
 };

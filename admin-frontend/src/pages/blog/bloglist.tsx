@@ -4,7 +4,7 @@ import isOnline from "is-online";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { ToastContainer, toast } from "react-toastify";
 import { reset, resetGettingBlogs } from "../../redux/blogSlice";
-import { setDeleteActionToFalse } from "../../redux/deleteActionSlice";
+import { setDeleteActionToFalse, resetSetDeleteAction } from "../../redux/deleteActionSlice";
 
 import Loading from "../../Layout/Loading/loading";
 import ConnectionError from "../../Layout/ConnectionError/connectionerror";
@@ -71,6 +71,7 @@ function BlogList() {
 
   //Notify if there was an error during delection. :)
   const notifyError = () => toast.error("Failed to delete!");
+  const notifyServerError = () => toast.error("Something went wrong!", {   autoClose:false});
 
   const table = useReactTable({
     data,
@@ -86,17 +87,30 @@ function BlogList() {
   }, []);
 
   useEffect(() => {
-    if (deleteAction) {
+    if (deleteAction  === true) {
+      console.log("Delete action is "  + deleteAction);
       getAllBlogs(dispatch)
         .then((response) => {
           console.log(response.blogs);
           setData(response?.blogs);
-          dispatch(setDeleteActionToFalse());
+         notify();
+          
         })
         .catch((err) => {
           console.log(err);
         });
     }
+
+
+    if(deleteAction === false){
+      console.log("Delete action is "  + deleteAction);
+      
+      notifyError();
+    }
+
+    dispatch(resetSetDeleteAction());
+
+
   }, [deleteAction]);
 
   useEffect(() => {
@@ -107,15 +121,20 @@ function BlogList() {
 
     getAllBlogs(dispatch)
       .then((response) => {
-        console.log(response.blogs);
-        setData(response?.blogs);
+        console.log(response);
+        if(response.blogRetrieved){
+          setData(response?.blogs);
+        }else{
+          notifyServerError()
+        }
+        
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     // If deletion successfull and page is not fetching data
     if (isSuccess === true && gettingBlogs === false) {
       console.log("Getting " + gettingBlogs);
@@ -137,18 +156,18 @@ function BlogList() {
       notifyError();
       dispatch(reset());
     }
-  }, [isSuccess, isError]);
+  }, [isSuccess, isError]);*/
 
   // console.log(table.getRowModel().rows);
 
   return (
     <div>
-      {online ? (
+      {online  ? (
         isLoading ? (
           <Loading />
         ) : (
           <div className={styles.blog}>
-            <ToastContainer theme="light" />
+            <ToastContainer theme="light"  position="top-center"   />
             <div className={styles.blogContainer}>
               <div className={tableStyles.table}>
                 <h1      className={tableStyles.heading}            >Blogs</h1>

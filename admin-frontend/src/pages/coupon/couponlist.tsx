@@ -21,6 +21,7 @@ import { getAllCoupons } from "../../api/coupon";
 
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { BiEditAlt } from "react-icons/bi";
+import { IoFileTrayOutline } from "react-icons/io5";
 
 type Coupon = {
   _id: string;
@@ -70,6 +71,8 @@ function CouponList() {
   const [showError, setShowError] = useState<boolean>();
   const [data, setData] = useState<any>([]);
 
+  const [ serverError , setServerError] = useState(false)
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -116,7 +119,14 @@ function CouponList() {
     getAllCoupons(dispatch)
       .then((response) => {
         console.log(response);
-        setData(response.result.reverse());
+        if(response.couponsRetrieved ){
+          setData(response.result.reverse());
+        }else{
+          console.log("SERVER ERROR");
+          
+          setServerError(true)
+        }
+       
       })
       .catch((error) => {
         console.log(error);
@@ -156,7 +166,9 @@ function CouponList() {
                   })}
                 </section>
 
-                <section className={tableStyles.boxShadow }>
+                { serverError? <p>Something went wrong</p>   :          (data.length === 0 ? (
+                   <div className={tableStyles.noData}  > <IoFileTrayOutline  className={tableStyles.doDataIcon} />  <p>No data</p>   </div>
+                ) :(              <section className={tableStyles.boxShadow }>
                   {table.getRowModel().rows.map((row) => (
                     <div className={tableStyles.dataContainer} key={row.id}>
                       {row.getVisibleCells().map((cell) => (
@@ -167,7 +179,7 @@ function CouponList() {
                           )}
                         </div>
                       ))}
-                      <div className={tableStyles.data}>
+                      <div className={tableStyles.data}> 
                         <BiEditAlt
                           className={tableStyles.edit}
                           size={30}
@@ -187,7 +199,7 @@ function CouponList() {
                       </div>
                     </div>
                   ))}
-                </section>
+                </section>                          ))}
                 <br />
 
                 <section>
