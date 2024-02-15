@@ -22,7 +22,7 @@ export const createBlog = async (req: Request, res: Response) => {
     });
   } catch (err) {
     res.send({
-      blogPosted: true,
+      blogPosted: false,
       message: "failed to post",
       error: err,
     });

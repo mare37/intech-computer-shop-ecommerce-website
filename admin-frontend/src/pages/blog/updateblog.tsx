@@ -4,11 +4,15 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
+import isOnline from "is-online";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import Dropzone from "react-dropzone";
 import ReactQuill from "react-quill";
+import { ToastContainer, toast } from "react-toastify";
 import "react-quill/dist/quill.snow.css";
 
 import styles from "./blog.module.scss";
+import tableStyles from "../table.module.scss";
 
 import { getAllBlogCategories } from "../../api/blogcategory";
 
@@ -34,6 +38,7 @@ function isQuillEmpty(value: string) {
 
 function UpdateBlog() {
   const [acceptedFiles, setAcceptedFile] = useState<File[]>([]);
+  const [serverError, setServerError] = useState(false);
 
   const [productCategories, setProductCategories] = useState<any>([]);
   const [description, setDescription] = useState("");
@@ -49,6 +54,17 @@ function UpdateBlog() {
 
   const { id } = useParams();
 
+  const { isSuccess, isError, isLoading, gettingBlogs } = useAppSelector(
+    (state) => state.blog
+  );
+
+  const notifyUpdate = () => toast.success("Blog updated Successfully!");
+  const notifyUpdateError = () =>
+    toast.error("Failed to update blog!", { autoClose: false });
+
+  const notifyLoadError = () =>
+    toast.error("You are offline! Check your connection");
+
   const {
     register,
     handleSubmit,
@@ -58,69 +74,80 @@ function UpdateBlog() {
   });
 
   useEffect(() => {
-    getAllBlogCategories(dispatch)
-      .then((response) => {
-        console.log(response);
+    isOnline().then((online: boolean) => {
+      if (online || !online) {
+        getAllBlogCategories(dispatch)
+          .then((response) => {
+            console.log(response);
 
-        setProductCategories(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+            if (response.blogCatRetrieved) {
+              setProductCategories(response.result);
+            } else {
+              setServerError(true);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
 
-    if (id !== undefined) {
-      getOneBlog(id, dispatch)
-        .then((response) => {
-          console.log(response);
-          setTitle(response.title);
-          setDescription(response.description);
-          setCategory(response.category);
-          setDislikes(response.dislikes);
-          setImages(response.images);
-          setLikes(response.likes);
-          setNumViews(response.numViews);
-          setStatus(response.status);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+        if (id !== undefined) {
+          getOneBlog(id, dispatch)
+            .then((response) => {
+              console.log(response);
+              setTitle(response.title);
+              setDescription(response.description);
+              setCategory(response.category);
+              setDislikes(response.dislikes);
+              setImages(response.images);
+              setLikes(response.likes);
+              setNumViews(response.numViews);
+              setStatus(response.status);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      } else {
+        notifyLoadError();
+      }
+    });
   }, []);
 
   return (
     <div className={styles.blog}>
+      <ToastContainer theme="light" position="top-center" />
+
       <div className={styles.blogContainer}>
         <form
-          onSubmit={(e)=>{
-
-            e.preventDefault()
+          onSubmit={(e) => {
+            e.preventDefault();
 
             const blogUpdate: any = {};
 
             blogUpdate["title"] = title;
-          //  blogUpdate["likes"] = likes;
-          //  blogUpdate["dislikes"] = dislikes;
-           blogUpdate["category"] = category;
-         //   blogUpdate["numViews"] = numViews;
-         //   blogUpdate["status"] = status;
-         //   blogUpdate["images"] = images;
+            blogUpdate["likes"] = likes;
+            blogUpdate["dislikes"] = dislikes;
+            blogUpdate["category"] = category;
+            blogUpdate["numViews"] = numViews;
+            blogUpdate["status"] = status;
+            blogUpdate["images"] = images;
             blogUpdate["description"] = description;
-
 
             if (id !== undefined) {
               console.log(blogUpdate);
-              
-              updateBlog(id,blogUpdate, dispatch);
+
+              updateBlog(id, blogUpdate, dispatch).then((response) => {
+                console.log(response);
+                if (response.blogUpdated) {
+                  notifyUpdate();
+                } else {
+                  notifyUpdateError();
+                }
+              });
             }
-
-
-          }
-
-
-
-          }
+          }}
         >
-          <h3>Edit blog</h3>
+          <h3 className={tableStyles.heading}>Edit blog</h3>
           <input
             value={title}
             placeholder="Enter blog title"
@@ -130,12 +157,14 @@ function UpdateBlog() {
           />
 
           <select
-          value={category}
+            value={category}
             onChange={(e) => {
               setCategory(e.target.value);
             }}
           >
-            <option value="">Select blog category</option>
+            <option value="">
+              {isLoading ? "Please wait..." : "Select blog categories"}
+            </option>
             {productCategories.map((item: any) => {
               return (
                 <option value={item._id} key={item._id}>
@@ -184,7 +213,15 @@ function UpdateBlog() {
             )}
           </Dropzone>
 
-          <button>Edit blog</button>
+          <div className={tableStyles.buttonAndLoaderContainer}>
+            <button
+              className={tableStyles.universalButton}
+              disabled={isLoading}
+            >
+              Edit Blog
+            </button>
+            {isLoading ? <span className={tableStyles.loader}></span> : ""}
+          </div>
         </form>
       </div>
     </div>

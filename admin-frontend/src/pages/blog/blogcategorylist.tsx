@@ -8,7 +8,7 @@ import tableStyles from "../table.module.scss";
 import { IoFileTrayOutline } from "react-icons/io5";
 import { ToastContainer, toast } from "react-toastify";
 
-import { setDeleteActionToFalse } from "../../redux/deleteActionSlice";
+import { setDeleteActionToFalse,resetSetDeleteAction } from "../../redux/deleteActionSlice";
 
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { setPopUpToTrue, setId } from "../../redux/popupSlice";
@@ -40,7 +40,11 @@ const columnHelper = createColumnHelper<BlogCategory>();
 const columns = [
   columnHelper.accessor("_id", {
     header: "Serial No.",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      if (info.row.original._id.length > 5) {
+        return info.row.original._id.slice(0, 8) + "...";
+      }
+    },
   }),
   columnHelper.accessor("title", {
     header: "Name",
@@ -68,6 +72,9 @@ function BlogCategoryList() {
   //  Notify that the deletion was successfull when this page loads
   const notify = () => toast.success("Deleted Successfully!");
 
+  //server error
+  const notifyServerError = () => toast.error("Something went wrong! Failed to load");
+
   //Notify if there was an error during delection. :)
   const notifyError = () => toast.error("Failed to delete!");
 
@@ -84,21 +91,52 @@ function BlogCategoryList() {
     return () => clearTimeout(timer);
   }, []);
 
+  
+
+
+
+
   useEffect(() => {
-    if (deleteAction) {
+    console.log("Delete action " + deleteAction);
+
+    if (deleteAction  === true) {
+      console.log("Deleted action complete");
+
       getAllBlogCategories(dispatch)
-        .then((response) => {
-          console.log(response);
-          setData(response);
-          dispatch(setDeleteActionToFalse());
-          //  dispatch(reset());
-          dispatch(resetGettingBlogCategories());
-        })
-        .catch((err) => {
-          console.log();
-        });
+      .then((response) => {
+        console.log(response);
+        setData(response.result   );
+        notify();
+        //  dispatch(reset());
+        dispatch(resetGettingBlogCategories());
+      })
+      .catch((err) => {
+        console.log();
+      });
+    } 
+
+    if(deleteAction === false){
+      notifyError();
     }
+    dispatch(resetSetDeleteAction());
   }, [deleteAction]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     isOnline().then((response: boolean) => {
@@ -109,38 +147,20 @@ function BlogCategoryList() {
     getAllBlogCategories(dispatch)
       .then((response) => {
         console.log(response);
-        setData(response);
+        if(response.blogCatRetrieved) {
+          setData(response.result);
+        }else{
+          notifyServerError()
+          
+        }
+       
       })
       .catch((err) => {
-        console.log();
+        console.log(err);
       });
   }, []);
 
-  console.log("Getting " + gettingBlogCategories);
-
-  useEffect(() => {
-    // If deletion successfull and page is not fetching data
-    if (isSuccess === true && gettingBlogCategories === false) {
-      console.log("Getting " + gettingBlogCategories);
-
-      console.log("success");
-      notify();
-      dispatch(reset());
-
-      // dispatch( resetGet())
-    }
-    if (isSuccess === true && gettingBlogCategories === true) {
-      console.log("success");
-      // notify()
-      dispatch(reset());
-      dispatch(resetGettingBlogCategories());
-    }
-
-    if (isError && pageFetchingData === false) {
-      ///  notifyError();
-      dispatch(reset());
-    }
-  }, [isSuccess, isError]);
+  
 
   return (
     <div>
@@ -149,11 +169,11 @@ function BlogCategoryList() {
           <Loading />
         ) : (
           <div className={styles.blog}>
-            <ToastContainer theme="light" />
+           <ToastContainer theme="light"   position="top-center"/>
             <div className={styles.blogContainer}>
               <div className={tableStyles.table}>
-                <h1>Blog categories</h1>
-                <section>
+                <h1      className={tableStyles.heading}         >Blog categories</h1>
+                <section       className={tableStyles.boxShadow }             >
                   {table.getHeaderGroups().map((headerGroup) => {
                     return (
                       <div
@@ -185,7 +205,7 @@ function BlogCategoryList() {
                     <p>No data</p>{" "}
                   </div>
                 ) : (
-                  <section className={tableStyles.tableData}>
+                  <section  className={tableStyles.boxShadow }>
                     {table.getRowModel().rows.map((row) => (
                       <div className={tableStyles.dataContainer} key={row.id}>
                         {row.getVisibleCells().map((cell) => (

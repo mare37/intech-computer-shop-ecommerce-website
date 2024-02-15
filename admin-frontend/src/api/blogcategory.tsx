@@ -8,8 +8,8 @@ import {
   isSuccess,
   reset,
   setGettingBlogCategories,
-  resetGettingBlogCategories
-} from "../redux/blogcategorySlice"; 
+  resetGettingBlogCategories,
+} from "../redux/blogcategorySlice";
 
 export const addBlogCategory = async (title: string, dispatch: any) => {
   const setReset = () => {
@@ -31,8 +31,7 @@ export const addBlogCategory = async (title: string, dispatch: any) => {
       dispatch(isError());
     }
     console.log(result.data);
-    return result.data
-   
+    return result.data;
   } catch (error) {
     dispatch(isError());
 
@@ -40,41 +39,29 @@ export const addBlogCategory = async (title: string, dispatch: any) => {
   }
 };
 
-export const getAllBlogCategories = async (dispatch: any) => { 
-
-    const setReset = () => {
-        dispatch(reset());
-      };
-
+export const getAllBlogCategories = async (dispatch: any) => {
+  const setReset = () => {
+    dispatch(reset());
+  };
 
   dispatch(isLoading());
-
 
   try {
     const result = await axios.get(`${base_url}blog-category`);
 
     console.log(result);
-    
 
     if (result.data.blogCatRetrieved) {
-    
       dispatch(isSuccess());
-      dispatch(setGettingBlogCategories())
-     
-    
-     
-       
-        
-   
-      } else {
-        dispatch(isError());
-       
-      }
-  return result.data;
+      dispatch(setGettingBlogCategories());
+    } else {
+      dispatch(isError());
+    }
+    return result.data;
   } catch (error) {
     console.log(error);
-    dispatch(reset())
-    return {blogCatRetrieved: false} 
+    dispatch(reset());
+    return { blogCatRetrieved: false };
   }
 };
 
@@ -82,7 +69,11 @@ export const deleteBlogCategory = async (id: string, dispatch: any) => {
   const setReset = () => {
     dispatch(reset());
   };
+
+
+  console.log("deletinggggggggggg");
   
+
   dispatch(isLoading());
 
   try {
@@ -92,14 +83,15 @@ export const deleteBlogCategory = async (id: string, dispatch: any) => {
 
     if (result.data.blogCatDeleted) {
       dispatch(isSuccess());
-      
     } else {
       dispatch(isError());
     }
+    return result.data
   } catch (error) {
     dispatch(isError());
 
     console.log(error);
+    return { blogCatDeleted: false  }
   }
 };
 
@@ -112,7 +104,7 @@ export const updateBlogCategory = async (
     dispatch(reset());
   };
 
-  dispatch(isLoading()); 
+  dispatch(isLoading());
   try {
     const result = await axios.put(`${base_url}blog-category/${id}`, {
       title: title,
@@ -127,11 +119,12 @@ export const updateBlogCategory = async (
       dispatch(isError());
     }
 
-    return result.data
+    return result.data;
   } catch (error) {
     console.log(error);
-
+   
     dispatch(isError());
+    return { blogCatUpdated: false  }
   }
 };
 
@@ -148,7 +141,7 @@ export const getOneBlogCategory = async (id: string, dispatch: any) => {
 
   try {
     const result = await axios.get(`${base_url}blog-category/${id}`);
-    //console.log(result);
+    console.log(result);
 
     setTimeout(() => {
       loading();
@@ -159,5 +152,6 @@ export const getOneBlogCategory = async (id: string, dispatch: any) => {
     return result.data;
   } catch (error) {
     dispatch(isError());
+    return { blogCatRetrieved: false  }
   }
 };

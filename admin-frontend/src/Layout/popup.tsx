@@ -69,16 +69,33 @@ function Popup() {
 
       deleteBlogCategory(id, dispatch).then((response) => {
         console.log(response);
+        if( response.blogCatDeleted){
+          dispatch(setDeleteActionToTrue());
+        }else{
+          dispatch(setDeleteActionToFalse())
+        }
 
-        dispatch(setDeleteActionToTrue());
-      });
+        
+      })
     }
 
     if (window.location.pathname === "/admin/bloglist") {
       dispatch(setPopUpToFalse());
 
-      deleteBlog(id, dispatch).then(() => {
-        dispatch(setDeleteActionToTrue());
+      deleteBlog(id, dispatch).then((response) => {
+
+        console.log(response);
+
+        if( response.blogDeleted){
+          dispatch(setDeleteActionToTrue());
+        }else{
+          console.log("Toggle delete action");
+          
+          dispatch(setDeleteActionToFalse())
+        }
+        
+
+      //  dispatch(setDeleteActionToTrue());
       });
     }
 

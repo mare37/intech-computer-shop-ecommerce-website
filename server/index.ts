@@ -50,4 +50,4 @@ app.listen(port, async () => {
   console.log("Connecting to mongo...");
   await connectDb();
   console.log(`Listening on port ${port}`);
-});
+}); 

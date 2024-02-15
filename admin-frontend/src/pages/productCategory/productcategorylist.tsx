@@ -1,12 +1,23 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import isOnline from "is-online";
+import Loading from "../../Layout/Loading/loading";
+import ConnectionError from "../../Layout/ConnectionError/connectionerror";
 import { getAllProductCategories } from "../../api/productcatetory";
 import { useDispatch } from "react-redux";
+import {
+  setDeleteActionToFalse,
+  resetSetDeleteAction,
+} from "../../redux/deleteActionSlice";
 import { setId, setPopUpToTrue } from "../../redux/popupSlice";
-import { reset,resetGettingProductCategories } from "../../redux/productcategorySlice";
+import {
+  reset,
+  resetGettingProductCategories,
+} from "../../redux/productcategorySlice";
 import styles from "./productcategory.module.scss";
 import tableStyles from "../table.module.scss";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
+import { IoFileTrayOutline } from "react-icons/io5";
 
 import {
   useReactTable,
@@ -51,17 +62,19 @@ const columns = [
 ];
 
 function ProductCategoryList() {
+  const [online, setOnline] = useState<boolean>();
+  const [showError, setShowError] = useState<boolean>();
   const [data, setData] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const popup:any = useAppSelector((state) => state.popUpController.popup);
-  const {isSuccess, isError, gettingProductCategories} = useAppSelector((state)=>state.productCategory)
-
+  const popup: any = useAppSelector((state) => state.popUpController.popup);
+  const { isSuccess, isError, gettingProductCategories, isLoading } =
+    useAppSelector((state) => state.productCategory);
+  const { deleteAction } = useAppSelector((state) => state.deleteAction);
 
   const notify = () => toast.success("Deleted Successfully!");
   const notifyError = () => toast.error("Failed to delete!");
-
 
   const table = useReactTable({
     data,
@@ -70,7 +83,22 @@ function ProductCategoryList() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  // Hide error component when page loads and internet connection exists
   useEffect(() => {
+    const timer = setTimeout(() => setShowError(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    isOnline()
+      .then((response: boolean) => {
+        setOnline(response);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
     getAllProductCategories(dispatch).then((response) => {
       console.log(response.result);
 
@@ -79,15 +107,26 @@ function ProductCategoryList() {
   }, []);
 
   useEffect(() => {
-    getAllProductCategories(dispatch).then((response) => {
-      console.log(response.result);
+    console.log("Delete action " + deleteAction);
 
-      setData(response.result.reverse());
-    });
-  }, [popup]);
+    if (deleteAction  === true) {
+      console.log("Deleted action complete");
 
+      getAllProductCategories(dispatch).then((response) => {
+        console.log(response.result);
 
-  useEffect(()=>{
+        setData(response.result.reverse());
+        notify();
+      });
+    } 
+
+    if(deleteAction === false){
+      notifyError();
+    }
+    dispatch(resetSetDeleteAction());
+  }, [deleteAction]);
+
+  /*useEffect(()=>{
     if (isSuccess === true  && gettingProductCategories === false) { 
 
       console.log("Getting " +  gettingProductCategories);
@@ -112,91 +151,117 @@ function ProductCategoryList() {
 
   
 
-  },[isSuccess, isError])
+  },[isSuccess, isError])*/
 
   return (
-    <div className={styles.addProductCategory}>
-      <div className={styles.addProductCategoryContainer}>
-      <ToastContainer theme="light"   />
-        <div className={tableStyles.table}>
-          <h1>Product Categories</h1>
-          <section>
-            {table.getHeaderGroups().map((headerGroup) => {
-              return (
-                <div
-                  key={headerGroup.id}
-                  className={tableStyles.headerContainer}
-                >
-                  {headerGroup.headers.map((header) => {
+    <div>
+      {online ? (
+        isLoading ? (
+          <Loading />
+        ) : (
+          <div className={styles.addProductCategory}>
+            <div className={styles.addProductCategoryContainer}>
+              <ToastContainer theme="light" />
+              <div className={tableStyles.table}>
+                <h1 className={tableStyles.heading}>Product Categories</h1>
+                <section>
+                  {table.getHeaderGroups().map((headerGroup) => {
                     return (
-                      <div key={header.id} className={tableStyles.header}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      <div
+                        key={headerGroup.id}
+                        className={tableStyles.headerContainer}
+                      >
+                        {headerGroup.headers.map((header) => {
+                          return (
+                            <div key={header.id} className={tableStyles.header}>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </div>
+                          );
+                        })}
+                        <div className={tableStyles.header}>Action</div>
                       </div>
                     );
                   })}
-                  <div className={tableStyles.header}>Action</div>
-                </div>
-              );
-            })}
-          </section>
+                </section>
 
-          <section className={tableStyles.tableData}>
-            {table.getRowModel().rows.map((row) => (
-              <div className={tableStyles.dataContainer} key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <div className={tableStyles.data} key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                {data.length === 0 ? (
+                  <div className={tableStyles.noData}>
+                    {" "}
+                    <IoFileTrayOutline
+                      className={tableStyles.doDataIcon}
+                    />{" "}
+                    <p>No data</p>{" "}
                   </div>
-                ))}
-                <div className={tableStyles.data}>
-                  <BiEditAlt
-                    onClick={() => {
-                      navigate(
-                        `/admin/updateproductcategory/${row.original._id}`
-                      );
-                    }}
-                    className={tableStyles.edit}
-                    size={30}
-                  />
-                  <BiSolidTrashAlt
-                    onClick={() => {
-                      dispatch(setPopUpToTrue());
-                      dispatch(setId({ id: row.original._id })); 
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    className={tableStyles.trash}
-                    size={30}
-                  />
+                ) : (
+                  <section className={tableStyles.boxShadow}>
+                    {table.getRowModel().rows.map((row) => (
+                      <div className={tableStyles.dataContainer} key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <div className={tableStyles.data} key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                        <div className={tableStyles.data}>
+                          <BiEditAlt
+                            onClick={() => {
+                              navigate(
+                                `/admin/updateproductcategory/${row.original._id}`
+                              );
+                            }}
+                            className={tableStyles.edit}
+                            size={30}
+                          />
+                          <BiSolidTrashAlt
+                            onClick={() => {
+                              dispatch(setPopUpToTrue());
+                              dispatch(setId({ id: row.original._id }));
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                            className={tableStyles.trash}
+                            size={30}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </section>
+                )}
+
+                <br />
+
+                <section>
+                  Page {table.getState().pagination.pageIndex + 1} of{" "}
+                  {table.getPageCount()}
+                </section>
+                <br />
+                <div className={tableStyles.navigatepages}>
+                  <button
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                  >
+                    {"<"}
+                  </button>
+                  <button
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                  >
+                    {">"}
+                  </button>
                 </div>
               </div>
-            ))}
-          </section>
-          <br />
-
-          <section>
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </section>
-          <br />
-          <div className={tableStyles.navigatepages}>
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {"<"}
-            </button>
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              {">"}
-            </button>
+            </div>
           </div>
-        </div>
-      </div>
+        )
+      ) : showError ? (
+        <ConnectionError />
+      ) : (
+        ""
+      )}
     </div>
   );
 }

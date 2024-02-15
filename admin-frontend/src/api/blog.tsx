@@ -63,13 +63,16 @@ export const getAllBlogs = async (dispatch: any) => {
       dispatch(setGettingBlogs())
      
       console.log(result.data);
-      return result.data;
+     
     } else {
       dispatch(isError());
     }
+
+    return result.data;
   } catch (error) {
     console.log(error);
-    //  dispatch(isError());
+    dispatch(reset());
+    return {blogRetrieved: false }
   }
 };
 
@@ -91,10 +94,12 @@ export const deleteBlog = async (id: string, dispatch: any) => {
     } else {
       dispatch(isError());
     }
+    return result.data
   } catch (error) {
-    dispatch(isError());
+   dispatch(reset());
 
     console.log(error);
+    return { blogDeleted: false  }
   }
 };
 
@@ -123,10 +128,12 @@ export const updateBlog = async (
     } else {
       dispatch(isError());
     }
+    return result.data
   } catch (error) {
     console.log(error);
 
     dispatch(isError());
+    return {blogUpdated: false }
   }
 };
 
