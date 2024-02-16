@@ -9,7 +9,7 @@ import { getAllBrands } from "../../api/brand";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { reset } from "../../redux/brandSlice";
 import { setPopUpToFalse, setPopUpToTrue, setId } from "../../redux/popupSlice";
-import { setDeleteActionToFalse } from "../../redux/deleteActionSlice";
+import { setDeleteActionToFalse,resetSetDeleteAction } from "../../redux/deleteActionSlice";
 import { isLoading, isSuccess, isError } from "../../redux/brandSlice";
 import styles from "./addbrand.module.scss";
 import tableStyles from "../table.module.scss";
@@ -30,7 +30,7 @@ import { FaGreaterThan, FaLessThan } from "react-icons/fa";
 import { error } from "console";
 
 type Brand = {
-  _id: Number;
+  _id: string;
   title: string;
   /* createdAt:string
   status:string
@@ -43,7 +43,11 @@ const columnHelper = createColumnHelper<Brand>();
 const columns = [
   columnHelper.accessor("_id", {
     header: "Serial No.",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      if (info.row.original._id.length > 5) {
+        return info.row.original._id.slice(0, 8) + "..."; 
+      }
+    },
   }),
   columnHelper.accessor("title", {
     header: "Name",
@@ -66,8 +70,11 @@ function BrandList() {
   });
   const { deleteAction } = useAppSelector((state) => state.deleteAction);
 
-  const notify = () => toast.success("Deleted Successfully!");
-  const notifyError = () => toast.error("Failed to delete!");
+  const notify = () => toast.success("Deleted Successfully!", {position:"top-center"});
+  const notifyError = () => toast.error("Failed to delete! Something is wrong! ", {autoClose: false});
+
+  const notifyLoadError = () => toast.error("Failed to load! Something is wrong! ", {autoClose:false, });
+
 
   // Hide error component when page loads and internet connection exists
   useEffect(() => {
@@ -76,19 +83,28 @@ function BrandList() {
   }, []);
 
   useEffect(() => {
-    if (deleteAction) {
+    if (deleteAction === true) {
       getAllBrands(dispatch)
         .then((response) => {
           //console.log(response.result);
-          console.log("triggered");
-
+      
           setData(response.result.reverse());
-          dispatch(setDeleteActionToFalse());
+          notify()
+         
         })
         .catch((error) => {
           console.log(error);
         });
     }
+
+
+    if (deleteAction === false) {
+      notifyError();
+    }
+
+
+
+    dispatch(resetSetDeleteAction());
   }, [deleteAction]);
 
   useEffect(() => {
@@ -103,27 +119,22 @@ function BrandList() {
 
     getAllBrands(dispatch)
       .then((response) => {
-        console.log(response.result);
+        console.log(response);
         console.log("triggered");
+        if(response.brandsRetrieved ){
+          setData(response.result.reverse());
+        }else{
+          notifyLoadError()
+        }
 
-        setData(response.result.reverse());
+        
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
-  useEffect(() => {
-    if (isSuccess) {
-      notify();
-      console.log("success");
-      dispatch(reset());
-    }
-    if (isError) {
-      notifyError();
-      dispatch(reset());
-    }
-  }, [isSuccess, isError]);
+  
 
   const table = useReactTable({
     data,

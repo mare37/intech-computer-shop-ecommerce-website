@@ -28,8 +28,12 @@ function Popup() {
     if (window.location.pathname === "/admin/brandlist") {
       dispatch(setPopUpToFalse());
 
-      deleteBrand(id, dispatch).then(() => {
-        dispatch(setDeleteActionToTrue());
+      deleteBrand(id, dispatch).then((response) => {
+        if( response.brandDeleted){
+          dispatch(setDeleteActionToTrue());
+        }else{
+          dispatch(setDeleteActionToFalse())
+        }
       });
     }
 

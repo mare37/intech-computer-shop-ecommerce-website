@@ -34,9 +34,9 @@ export const getOneBrand = async (req: Request, res: Response) => {
 
   try {
     const result = await brandModel.findById({ _id: id });
-    res.send({ result: result });
+    res.send({brandRetrieved: true, result: result });
   } catch (error) {
-    res.send({ error: error });
+    res.send({ brandRetrieved: false,error: error });
   }
 };
 
@@ -47,7 +47,7 @@ export const getAllBrands = async (req: Request, res: Response) => {
     const result = await brandModel.find({ status: "Active" });
     res.send({ brandsRetrieved: true, result: result })
   } catch (error) {
-    res.send({ brandsRetrieved: true, error: error })
+    res.send({ brandsRetrieved: false, error: error })
   }
 };
 
