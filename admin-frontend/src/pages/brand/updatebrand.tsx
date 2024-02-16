@@ -28,22 +28,34 @@ function UpdateBrand() {
   const { id } = useParams();
 
 
-  const notify = () => toast.success("Brand updated Successfully!");
- const notifyError = () => toast.error("Failed to update brand!");
+  const notify = () => toast.success("Brand updated Successfully!", {position: "top-center"});
+ const notifyError = () => toast.error("Failed to update brand!", {autoClose:false});
+ const notifyLoadError = () => toast.error("Failed to load brand! Something is wrong!", {autoClose:false}  );
 
 
   useEffect(() => {
     if (id) {
+      console.log("Loading " + isLoading );
+
       getOneBrand(id, dispatch).then((response) => {
-        console.log(response.result);
-        setBrandRetreival(true)
-        setBrand(response.result.title);
+        console.log(response);
+        console.log("Loading " + isLoading );
+
+        if(response.brandRetrieved){
+          setBrand(response.result.title);
+        }else{
+          notifyLoadError()
+        }
+       
+       
       }).catch((error)=>{
-        setBrandRetreival(false)
+        console.log(error);
+        
+       
       })
     }
 
-    dispatch(reset());
+  
   }, []);
 
   const {
@@ -58,7 +70,7 @@ function UpdateBrand() {
     <div
       onSubmit={handleSubmit(() => {
         if (id) {
-            setBrandRetreival(false)
+          
           updateBrand(id, brand, dispatch).then((response)=>{
             console.log(response);
 
@@ -76,10 +88,10 @@ function UpdateBrand() {
       className={styles.addbrand}
     >
       <div className={styles.addbrandContainer}>
-      <ToastContainer theme="light"   position="top-center"/>
+      <ToastContainer theme="light"  />
 
         <form>
-          <h3>Update Brand</ h3>
+          <h3  className={tableStyles.heading   }                   >Update Brand</ h3>
           
           <input
             value={brand}

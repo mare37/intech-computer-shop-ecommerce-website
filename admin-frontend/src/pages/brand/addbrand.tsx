@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from "../../hooks";
 import { ToastContainer, toast } from "react-toastify";
 
 import styles from "./addbrand.module.scss";
-import tableStyles from "../table.module.scss"
+import tableStyles from "../table.module.scss";
 
 import { addBrand } from "../../api/brand";
 import { reset } from "../../redux/brandSlice";
@@ -21,9 +21,8 @@ function AddBrand() {
     (state) => state.brand
   );
 
-
   const notify = () => toast.success("Brand added Successfully!");
- const notifyError = () => toast.error("Failed to add brand!");
+  const notifyError = () => toast.error("Failed to add brand!");
 
   useEffect(() => {
     dispatch(reset());
@@ -40,40 +39,34 @@ function AddBrand() {
   return (
     <div
       onSubmit={handleSubmit((data) =>
-        addBrand(data.brand.toLocaleLowerCase(), dispatch).then((response)=>{
+        addBrand(data.brand.toLocaleLowerCase(), dispatch).then((response) => {
           console.log(response);
-          if( response.brandCreated  ){
-            notify()
-          }else{
-            notifyError()
+          if (response.brandCreated) {
+            notify();
+          } else {
+            notifyError();
           }
-          
         })
       )}
       className={styles.addbrand}
     >
       <div className={styles.addbrandContainer}>
-      <ToastContainer theme="light"   position="top-center"/>
+        <ToastContainer theme="light" position="top-center" />
 
         <form>
-          <h3>Add Brand</h3>
+          <h3 className={tableStyles.heading}>Add Brand</h3>
           <input {...register("brand")} placeholder="" />
           {errors.brand && <p>Brand is required.</p>}
-       
 
-
-          
           <div className={tableStyles.buttonAndLoaderContainer}>
             <button
               className={tableStyles.universalButton}
               disabled={isLoading}
             >
-             Add brand
+              Add brand
             </button>
             {isLoading ? <span className={tableStyles.loader}></span> : ""}
           </div>
-          
-        
         </form>
       </div>
     </div>
