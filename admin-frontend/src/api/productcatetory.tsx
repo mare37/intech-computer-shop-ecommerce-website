@@ -36,6 +36,7 @@ export const addProductCategory = async (title: string, dispatch: any) => {
     dispatch(isError());
 
     console.log(error);
+    return {productCatCreated: false   }
   }
 };
 
@@ -48,6 +49,9 @@ export const getAllProductCategories = async (dispatch: any) => {
   try {
     const result = await axios.get(`${base_url}product-category`);
 
+    console.log(result);
+    
+
     dispatch(isSuccess());
 
     dispatch(setGettingProductCategories())
@@ -55,7 +59,8 @@ export const getAllProductCategories = async (dispatch: any) => {
     return result.data;
   } catch (error) {
     dispatch(isError());
-    console.log(error);
+    console.log(error); 
+    return { productCatRetrieved: false  }
   }
 };
 
@@ -80,6 +85,7 @@ export const deleteProductCategory = async (id: string, dispatch: any) => {
     dispatch(isError());
 
     console.log(error);
+    return {productCatDeleted:false }
   }
 };
 
@@ -106,10 +112,12 @@ export const updateProductCategory = async (
     } else {
       dispatch(isError());
     }
+    return result.data
   } catch (error) {
     console.log(error);
 
     dispatch(isError());
+    return {productCatUpdated: false }
   }
 };
 
@@ -137,5 +145,6 @@ export const getOneProductCategory = async (id: string, dispatch: any) => {
     return result.data;
   } catch (error) {
     dispatch(isError());
+    return { productCatRetrieved: false }
   }
 };

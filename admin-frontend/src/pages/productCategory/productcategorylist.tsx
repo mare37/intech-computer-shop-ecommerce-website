@@ -44,7 +44,7 @@ const DATA = [
 ];
 
 type ProductCategory = {
-  _id: number;
+  _id: string;
   title: string;
 };
 
@@ -53,7 +53,11 @@ const columnHelper = createColumnHelper<ProductCategory>();
 const columns = [
   columnHelper.accessor("_id", {
     header: "Serial No.",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      if (info.row.original._id.length > 5) {
+        return info.row.original._id.slice(0, 8) + "...";
+      }
+    },
   }),
   columnHelper.accessor("title", {
     header: "Name",
@@ -73,8 +77,17 @@ function ProductCategoryList() {
     useAppSelector((state) => state.productCategory);
   const { deleteAction } = useAppSelector((state) => state.deleteAction);
 
-  const notify = () => toast.success("Deleted Successfully!");
-  const notifyError = () => toast.error("Failed to delete!");
+  const notify = () =>
+    toast.success("Deleted Successfully!", { position: "top-center" });
+  const notifyError = () =>
+    toast.error("Failed to delete! Something is wrong! ", {
+      position: "top-center",
+      autoClose: false,
+    });
+  const notifyLoadError = () =>
+    toast.error("Failed to load data! Something is wrong!", {
+      autoClose: false,
+    });
 
   const table = useReactTable({
     data,
@@ -100,16 +113,20 @@ function ProductCategoryList() {
       });
 
     getAllProductCategories(dispatch).then((response) => {
-      console.log(response.result);
+      console.log(response);
 
-      setData(response.result.reverse());
+      if (response.productCatRetrieved) {
+        setData(response.result.reverse());
+      } else {
+        notifyLoadError();
+      }
     });
   }, []);
 
   useEffect(() => {
     console.log("Delete action " + deleteAction);
 
-    if (deleteAction  === true) {
+    if (deleteAction === true) {
       console.log("Deleted action complete");
 
       getAllProductCategories(dispatch).then((response) => {
@@ -118,9 +135,9 @@ function ProductCategoryList() {
         setData(response.result.reverse());
         notify();
       });
-    } 
+    }
 
-    if(deleteAction === false){
+    if (deleteAction === false) {
       notifyError();
     }
     dispatch(resetSetDeleteAction());
