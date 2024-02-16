@@ -39,16 +39,28 @@ function ProductCategory() {
   });
 
 
-  const notify = () => toast.success("Product Category added Successfully!");
-  const notifyError = () => toast.error("Failed to add Product Category!");
+  const notify = () => toast.success("Product Category added Successfully!",  {position:"top-center"});
+  const notifyError = () => toast.error("Failed to add Product Category!",{autoClose:false}   );
+  const notifyLoadError = () => toast.error("Failed to load Product Category!",{autoClose:false} );
+
+  const notifyUpdated = () => toast.success("Product Category updated Successfully!",  {position:"top-center"});
+  const  notifyUpdateError = () => toast.error("Failed to Update Product Category!",{autoClose:false} );
+
+ 
 
   useEffect(() => {
     if (id != undefined) {
       getOneProductCategory(id, dispatch)
         .then((response) => {
-          console.log(response.result);
+          console.log(response);
           setProductCatRetrieval(true);
-          setProductCategory(response.result.title);
+
+          if( response.productCatRetrieved   ){
+            setProductCategory(response.result.title);
+          }else{
+            notifyLoadError()
+          }
+         
         })
         .catch((error) => {
           setProductCatRetrieval(false);
@@ -74,15 +86,26 @@ function ProductCategory() {
           })
         } else {
           setProductCatRetrieval(false);
-          updateProductCategory(id, productCategory, dispatch);
+          updateProductCategory(id, productCategory, dispatch).then((response)=>{
+            console.log(response);
+
+            if(response.productCatUpdated){
+              notifyUpdated()
+
+             }else{
+              notifyUpdateError()
+             }
+            
+
+          })
         }
       })}
       className={styles.addProductCategory}
     >
       <div className={styles.addProductCategoryContainer}>
-      <ToastContainer theme="light"   position="top-center"/>
+      <ToastContainer theme="light"   />
         <form>
-          <h3>{id === undefined ? "Add" : "Edit"} product category</h3>
+          <h3  className={tableStyles.heading}        >{id === undefined ? "Add" : "Edit"} product category</h3>
           <input
            value={productCategory}
             {...register("productCategory")}

@@ -19,19 +19,19 @@ import enquiryRoute from "./src/routes/enquiryRoute";
 import couponRoute from "./src/routes/couponRoute";
 
 dotenv.config();
-const port = process.env.PORT || 9000;
+const port = process.env.PORT || 9000;   
 
 app.use(express.static("./public"));
 app.set("view engine", "ejs");
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: true, credentials: true }));    
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
 app.use("/api", userRoute);
-app.use("/api/product", productRoute);
+app.use("/api/product", productRoute); 
 app.use("/api/blog", blogRoute);
 app.use("/api/product-category", productCatRoute);
 app.use("/api/brand", brandRoute);
@@ -50,4 +50,4 @@ app.listen(port, async () => {
   console.log("Connecting to mongo...");
   await connectDb();
   console.log(`Listening on port ${port}`);
-}); 
+});  
