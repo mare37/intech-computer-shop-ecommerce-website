@@ -34,6 +34,7 @@ export const addCoupon = async (
     dispatch(isError());
 
     console.log(error);
+   return  { couponCreated: false}
   }
 };
 
@@ -78,6 +79,7 @@ export const removeCoupon = async (id: string, dispatch: any) => {
     dispatch(isError());
 
     console.log(error);
+    return {couponRemoved: false}
   }
 };
 
@@ -113,6 +115,7 @@ export const updateCoupon = async (
     console.log(error);
 
     dispatch(isError());
+    return {couponUpdated: false   }
   }
 };
 
