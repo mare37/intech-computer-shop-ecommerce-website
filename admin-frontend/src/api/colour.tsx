@@ -32,10 +32,12 @@ export const addColour = async (title: string, dispatch: any) => {
     }
 
     console.log(result.data);
+    return result.data
   } catch (error) {
     dispatch(isError());
 
     console.log(error);
+    return{colourCreated:false }
   }
 };
 
@@ -55,14 +57,16 @@ export const getAllColours = async (dispatch: any) => {
        if(result.data.coloursRetrieved  ){
        // dispatch(isSuccess());
        setTimeout(setReset, 2000);
-        return result.data
+       
        }else{
         dispatch(isError());
        }
 
-    return result.data.result
+    return result.data
   } catch (error) {
     console.log(error);
+    dispatch(isError());
+    return { coloursRetrieved: false  }
   }
 };
 
@@ -78,10 +82,12 @@ export const deleteColour = async (id: string, dispatch: any) => {
     } else {
       dispatch(isError());
     }
+    return result.data
   } catch (error) {
     dispatch(isError());
 
     console.log(error);
+    return { colourDeleted: false  }
   }
 };
 
@@ -110,6 +116,8 @@ export const updateColour = async(id:string,title:string,dispatch:any) =>{
       dispatch(isError());
     }
 
+    return result.data
+
    
     
 
@@ -118,6 +126,7 @@ export const updateColour = async(id:string,title:string,dispatch:any) =>{
     
 
     dispatch(isError());
+    return {colourUpdated: false  }
 
   }
 

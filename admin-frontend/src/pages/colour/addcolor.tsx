@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import { ToastContainer, toast } from "react-toastify";
 
-import { addColour, updateColour, getOneColour } from "../../api/colour"; 
+import { addColour, updateColour, getOneColour } from "../../api/colour";
 
 import styles from "./addcolor.module.scss";
 import tableStyles from "../table.module.scss";
@@ -20,6 +20,12 @@ function AddColour() {
   const [colourRetreival, setColourRetreival] = useState(false);
 
   const { id } = useParams();
+
+  const notify = () => toast.success("Colour added Successfully!");
+  const notifyError = () => toast.error("Failed to add colour!");
+  const notifyUpdate = () => toast.success("Colour updated Successfully!");
+  const notifyUpdateError = () => toast.error("Failed to update colour!");
+  const notifyServerError = () => toast.success("Something went wrong!");
 
   useEffect(() => {
     if (id != undefined) {
@@ -55,17 +61,36 @@ function AddColour() {
     <div
       onSubmit={handleSubmit((data) => {
         if (id === undefined) {
-          addColour(data.colour, dispatch);
+          addColour(data.colour, dispatch).then((response) => {
+            console.log(response);
+
+            if (response.colourCreated) {
+              notify();
+            } else {
+              notifyError();
+            }
+          });
         } else {
           setColourRetreival(false);
-          updateColour(id, colour, dispatch);
+          updateColour(id, colour, dispatch).then((response) => {
+            console.log(response);
+
+            if (response.colourUpdated) {
+              notifyUpdate();
+            } else {
+              notifyUpdateError();
+            }
+          });
         }
       })}
       className={styles.addcolor}
     >
       <div className={styles.addcolorContainer}>
+        <ToastContainer theme="light" position="top-center" />
         <form>
-          <h3>{id === undefined ? "Add" : "Edit"} Colour</h3>
+          <h3 className={tableStyles.heading}>
+            {id === undefined ? "Add" : "Edit"} Colour
+          </h3>
           <input
             value={colour}
             {...register("colour")}
@@ -75,17 +100,18 @@ function AddColour() {
             placeholder="ENTER COLOUR"
           />
           {errors.colour && <p>Colour is required.</p>}
-          <button>{id === undefined ? "Add" : "Edit"} colour</button> 
-          {isSuccess === true && colourRetreival === false && (
-            <span className={tableStyles.success}>
-              Colour {id !== undefined ? "updated" : "created"} successfully.
-            </span>
-          )}
-          {isError && (
-            <span className={tableStyles.error}>
-              Something went wrong.Try again
-            </span>
-          )}
+
+          <div className={tableStyles.buttonAndLoaderContainer}>
+            <button
+              className={tableStyles.universalButton}
+              disabled={isLoading}
+            >
+              {id === undefined ? "Add" : "Edit"} colour
+            </button>
+            {isLoading ? <span className={tableStyles.loader}></span> : ""}
+          </div>
+
+        
         </form>
       </div>
     </div>

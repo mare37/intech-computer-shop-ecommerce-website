@@ -29,7 +29,7 @@ function AddCoupon() {
 
   const notify = () => toast.success("Coupon Added Successfully!");
 
-  const notifyError = () => toast.error("Failed to add coupon!");
+  const notifyError = () => toast.error("Failed to add coupon!", {autoClose:false});
 
   const notifyLoadError = () =>
     toast.error("Failed to load coupon!", { autoClose: false });

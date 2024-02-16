@@ -6,7 +6,10 @@ import Loading from "../../Layout/Loading/loading";
 import ConnectionError from "../../Layout/ConnectionError/connectionerror";
 import { ToastContainer, toast } from "react-toastify";
 import { setPopUpToTrue, setId } from "../../redux/popupSlice";
-import { setDeleteActionToFalse } from "../../redux/deleteActionSlice";
+import {
+  setDeleteActionToFalse,
+  resetSetDeleteAction,
+} from "../../redux/deleteActionSlice";
 import { reset } from "../../redux/colourSlice";
 import styles from "./addcolor.module.scss";
 import tableStyles from "../table.module.scss";
@@ -23,6 +26,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { BiEditAlt } from "react-icons/bi";
+import { error } from "console";
 
 type Colour = {
   _id: string;
@@ -38,7 +42,11 @@ const columnHelper = createColumnHelper<Colour>();
 const columns = [
   columnHelper.accessor("_id", {
     header: "Serial No.",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      if (info.row.original._id.length > 5) {
+        return info.row.original._id.slice(0, 8) + "...";
+      }
+    },
   }),
   columnHelper.accessor("title", {
     header: "Name",
@@ -57,6 +65,8 @@ function ColourList() {
   const notify = () =>
     toast("Deleted successfully", { position: "top-center", type: "success" });
   const notifyError = () => toast.error("Failed to delete!");
+
+  const notifyLoadError = () => toast.error("Failed to Load!Something is wrong", {autoClose: false});
 
   const dispatch = useAppDispatch();
   const popup = useAppSelector((state) => {
@@ -94,10 +104,16 @@ function ColourList() {
 
     getAllColours(dispatch)
       .then((response) => {
-        console.log(response?.result);
+        console.log(response);
         console.log("triggered");
 
-        setData(response?.result.reverse());
+        if(response.coloursRetrieved ){
+          setData(response?.result.reverse()); 
+        }else{
+          notifyLoadError()
+        }
+
+      
       })
       .catch((error) => {
         console.log(error);
@@ -107,18 +123,29 @@ function ColourList() {
   // If user has decided to to click ok button on delete in pop up window,
   // go ahead and fetch data again to refresh the page
   useEffect(() => {
-    if (deleteAction) {
-      getAllColours(dispatch).then((response) => {
-        console.log(response.result);
-        console.log("triggered");
+    if (deleteAction === true) {
+      getAllColours(dispatch)
+        .then((response) => {
+          console.log(response.result);
+          notify();
 
-        setData(response.result.reverse());
-        dispatch(setDeleteActionToFalse());
-      });
+          setData(response.result.reverse());
+
+        
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
+
+    if (deleteAction === false) {
+      notifyError();
+    }
+
+    dispatch(resetSetDeleteAction());
   }, [deleteAction]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (isSuccess) {
       notify();
       console.log("success");
@@ -128,7 +155,7 @@ function ColourList() {
       notifyError();
       dispatch(reset());
     }
-  }, [isSuccess, isError]);
+  }, [isSuccess, isError]);*/
 
   return (
     <div>
@@ -137,11 +164,14 @@ function ColourList() {
           <Loading />
         ) : (
           <div className={styles.addcolor}>
-            <div className={      `${styles.addcolorContainer}    ${tableStyles.verticalScroll} `                    }>
-              <ToastContainer theme="light" />
+             <ToastContainer theme="light" />
+            <div
+              className={`${styles.addcolorContainer}    ${tableStyles.verticalScroll} `}
+            >
+             
               <div className={tableStyles.table}>
-                <h1   className={tableStyles.heading}                      >Colours</h1>
-                <section    className={tableStyles.boxShadow }      >
+                <h1 className={tableStyles.heading}>Colours</h1>
+                <section className={tableStyles.boxShadow}>
                   {table.getHeaderGroups().map((headerGroup) => {
                     return (
                       <div

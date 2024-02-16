@@ -36,8 +36,20 @@ function Popup() {
     if (window.location.pathname === "/admin/colourlist") {
       dispatch(setPopUpToFalse());
 
-      deleteColour(id, dispatch).then(() => {
-        dispatch(setDeleteActionToTrue());
+      deleteColour(id, dispatch).then((response) => {
+
+        console.log(response);
+        
+     
+
+        if( response.colourDeleted){
+          dispatch(setDeleteActionToTrue());
+        }else{
+          dispatch(setDeleteActionToFalse())
+        }
+
+
+
       });
     }
 
