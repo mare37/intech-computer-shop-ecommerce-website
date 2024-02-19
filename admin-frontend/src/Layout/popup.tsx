@@ -76,7 +76,14 @@ function Popup() {
       deleteProduct(id, dispatch).then((response) => {
         console.log(response);
 
-        dispatch(setDeleteActionToTrue());
+
+        if( response.productDeleted){
+          dispatch(setDeleteActionToTrue());
+        }else{
+          dispatch(setDeleteActionToFalse())
+        }
+
+       
       });
     }
 

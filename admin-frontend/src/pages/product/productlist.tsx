@@ -7,7 +7,10 @@ import ConnectionError from "../../Layout/ConnectionError/connectionerror";
 import { ToastContainer, toast } from "react-toastify";
 import { setPopUpToTrue, setId } from "../../redux/popupSlice";
 import { reset, resetGettingProducts } from "../../redux/productSlice";
-import { setDeleteActionToFalse } from "../../redux/deleteActionSlice";
+import {
+  setDeleteActionToFalse,
+  resetSetDeleteAction,
+} from "../../redux/deleteActionSlice";
 import { getAllProducts } from "../../api/product";
 import { IoFileTrayOutline } from "react-icons/io5";
 import styles from "./product.module.scss";
@@ -97,8 +100,10 @@ function ProductList() {
   const { popup } = useAppSelector((state) => state.popUpController);
 
   const dataloaded = () => toast.success("Data loaded ");
-  const notify = () => toast.success("Deleted Successfully!");
-  const notifyError = () => toast.error("Failed to delete!");
+  const notify = () => toast.success("Deleted Successfully!", {position:"top-center"});
+  const notifyError = () => toast.error("Failed to delete!",{autoClose:false});
+  const notifyLoadError = () => toast.error("Failed to load! Something is wrong!",{autoClose:false});
+
 
   const table = useReactTable({
     data,
@@ -119,53 +124,55 @@ function ProductList() {
 
     getAllProducts(dispatch)
       .then((response) => {
-        console.log(response?.data);
+        console.log(response);
 
-        setData(response?.data?.result.reverse());
+        if(response.productRetrieved ){
+          setData(response?.result.reverse());
+        }else{
+          notifyLoadError()
+        }
+
+       
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-
-   // Hide error component when page loads and internet connection exists
-   useEffect(() => {
+  // Hide error component when page loads and internet connection exists
+  useEffect(() => {
     const timer = setTimeout(() => setShowError(true), 1500);
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    if (deleteAction) {
+    if (deleteAction === true) {
       getAllProducts(dispatch)
         .then((response) => {
-          console.log(response?.data?.result);
+       
 
-          setData(response?.data?.result.reverse());
-          dispatch(setDeleteActionToFalse());
+          if(response.productRetrieved ){
+            setData(response?.result.reverse());
+            notify();
+          }else{
+            notifyLoadError()
+          }
+
+        
+        
         })
         .catch((err) => {
           console.log(err);
         });
     }
-  }, [deleteAction]);
-  useEffect(() => {
-    if (productIsSuccess === true && gettingProducts === true) {
-      console.log("success");
-      dispatch(reset());
-      dispatch(resetGettingProducts());
-    }
-    if (productIsSuccess === true && gettingProducts === false) {
-      //dataloaded successfully
-      notify();
-      console.log("success");
-      dispatch(reset());
-    }
-    if (productIsError) {
+
+    if (deleteAction === false) {
       notifyError();
-      dispatch(reset());
     }
-  }, [productIsSuccess, productIsError]);
+
+    dispatch(resetSetDeleteAction());
+  }, [deleteAction]);
+  
 
   return (
     <div>
@@ -175,10 +182,12 @@ function ProductList() {
         ) : (
           <div className={styles.product}>
             <ToastContainer theme="light" />
-            <div className={   `${styles.productContainer}     ${tableStyles.verticalScroll}`             }>
+            <div
+              className={`${styles.productContainer}     ${tableStyles.verticalScroll}`}
+            >
               <div className={tableStyles.table}>
                 <h1>Products</h1>
-                <section       className={tableStyles.boxShadow }      >
+                <section className={tableStyles.boxShadow}>
                   {table.getHeaderGroups().map((headerGroup) => {
                     return (
                       <div
@@ -202,9 +211,15 @@ function ProductList() {
                 </section>
 
                 {data.length === 0 ? (
-                  <div className={tableStyles.noData}  > <IoFileTrayOutline  className={tableStyles.doDataIcon} />  <p>No data</p>   </div>
+                  <div className={tableStyles.noData}>
+                    {" "}
+                    <IoFileTrayOutline
+                      className={tableStyles.doDataIcon}
+                    />{" "}
+                    <p>No data</p>{" "}
+                  </div>
                 ) : (
-                  <section  className={tableStyles.boxShadow }>
+                  <section className={tableStyles.boxShadow}>
                     {table.getRowModel().rows.map((row) => (
                       <div className={tableStyles.dataContainer} key={row.id}>
                         {row.getVisibleCells().map((cell) => (

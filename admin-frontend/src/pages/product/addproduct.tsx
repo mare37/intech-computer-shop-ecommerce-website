@@ -70,12 +70,12 @@ function AddProduct() {
   const [productCategories, setProductCategories] = useState<any>([]);
   const [description, setDescription] = useState("");
 
-  const notify = () => toast.success("Product added Successfully!");
+  const notify = () => toast.success("Product added Successfully!", {position: "top-center"});
 
   //Notify if there was an error during delection. :)
   const notifyError = () => toast.error("Failed to add product!");
 
-  const { productIsLoading, productIsError, productIsSuccess, gettingProducts } = useAppSelector(
+  const { productIsLoading, productIsError, productIsSuccess } = useAppSelector(
     (state) => state.product
   );
 
@@ -146,12 +146,14 @@ function AddProduct() {
             console.log("Description is empty");
           } else {
             data["description"] = description;
+            console.log(data);
+            
             addProduct(data, dispatch).then((response)=>{
               console.log(response);
               if(response.productCreated ){ 
                 notify()
               }else{
-                notifyError()
+                notifyError() 
               }
               
             })
@@ -199,7 +201,7 @@ function AddProduct() {
           />
 
           <select {...register("brand")}>
-            <option value="">Select Brand</option>
+            <option value="">{productIsLoading ? "Please wait..." : "Select brand"}</option>
             {brands.map((item: any) => {
               return (
                 <option value={item._id} key={item._id}>
@@ -211,7 +213,7 @@ function AddProduct() {
           {errors.brand && <p>Brand is required.</p>}
 
           <select {...register("category")}>
-            <option value="">Select product category</option>
+            <option value="">{productIsLoading ? "Please wait..." : "Select product category"}</option>
             {productCategories.map((item: any) => {
               return (
                 <option value={item._id} key={item._id}>
@@ -231,7 +233,7 @@ function AddProduct() {
           {errors.tag && <p>Status category is required.</p>}
 
           <select {...register("colour")}>
-            <option value="">Select colour</option>
+            <option value="">{productIsLoading ? "Please wait..." : "Select colour"}</option>
             {colours.map((item: any) => {
               return (
                 <option value={item._id} key={item._id}>
@@ -272,17 +274,14 @@ function AddProduct() {
             )}
           </Dropzone>
 
-          <button disabled={productIsLoading}>Add Product</button>
-          {productIsSuccess && (
-            <span className={tableStyles.success}>
-              Product Created successfully.
-            </span>
-          )}
-          {productIsError && (
-            <span className={tableStyles.error}>
-              Something went wrong.Try again
-            </span>
-          )}
+          <button disabled={productIsLoading}>
+            {productIsLoading ? (
+              <span className={tableStyles.loader}></span>
+            ) : (
+              "Add Product"
+            )}
+          </button>
+        
         </form>
       </div>
     </div>
