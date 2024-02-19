@@ -49,6 +49,7 @@ export const addProduct = async (productObject: Product, dispatch: any) => {
     dispatch(isError());
 
     console.log(error);
+    return {  productCreated:false }
   }
 };
 
@@ -68,9 +69,10 @@ export const getAllProducts = async (dispatch: any) => {
       setTimeout(setReset, 2000);
       dispatch( setGettingProducts())
       console.log(result.data);
-      return result;
+      return result.data
     } else {
       dispatch(isError());
+    
     }
 
 
@@ -80,7 +82,8 @@ export const getAllProducts = async (dispatch: any) => {
    
   } catch (error) {
     console.log(error);
-  //  dispatch(isError());
+   dispatch(isError());
+  return {productRetrieved: false    }
   }
 };
 
@@ -96,11 +99,14 @@ export const deleteProduct = async (id: string, dispatch: any) => {
     } else {
       dispatch(isError());
     }
+    return result.data
   } catch (error) {
     dispatch(isError());
 
     console.log(error);
+    return {productDeleted: false}
   }
+  
 };
 
 export const updateProduct = async (
@@ -131,10 +137,12 @@ export const updateProduct = async (
     } else {
       dispatch(isError());
     }
+    return result.data
   } catch (error) {
     console.log(error);
 
     dispatch(isError());
+    return {productUpdated: false }
   }
 };
 
@@ -143,9 +151,7 @@ export const getOneProduct = async (id: string, dispatch: any) => {
     dispatch(reset());
   };
 
-  const loading = () => {
-    console.log("loading");
-  };
+ 
 
   dispatch(isLoading());
 
@@ -155,19 +161,20 @@ export const getOneProduct = async (id: string, dispatch: any) => {
 
     if(result.data.productRetrieved){
       dispatch(isSuccess());
-      dispatch( setGettingProducts())
+     
       setTimeout(setReset, 2000);
-      return result.data;
+     
 
     }else{
       dispatch(isError());
 
     }
 
-    dispatch(isSuccess());
-    setTimeout(setReset, 2000);
+    return result.data;
+    
   
   } catch (error) {
     dispatch(isError());
+    setTimeout(setReset, 2000);
   }
 };

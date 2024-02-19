@@ -36,6 +36,8 @@ export const addBlogCategory = async (title: string, dispatch: any) => {
     dispatch(isError());
 
     console.log(error);
+
+    return {blogCatCreated: false    }
   }
 };
 

@@ -7,11 +7,12 @@ import * as yup from "yup";
 import Dropzone from "react-dropzone";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { ToastContainer, toast } from "react-toastify";
 
 import styles from "./product.module.scss";
 import tableStyles from "../table.module.scss";
 
-import { reset,resetGettingProducts} from "../../redux/productSlice";
+import { reset } from "../../redux/productSlice";
 
 import { addProduct, getOneProduct, updateProduct } from "../../api/product";
 import { getAllBrands } from "../../api/brand";
@@ -38,30 +39,7 @@ function isQuillEmpty(value: string) {
   return false;
 }
 
-/*nterface brand {
-  title: string;
-  _id: string;
-}
 
-interface category {
-  title: string;
-  _id: string;
-}
-
-type Product = {
-  _id: string;
-  title: string;
-  brand: brand;
-  quantity: number;
-  category: category;
-  colour: string;
-  price: number;
-};
-
-const price: number | string = '';
-const quantity: number | string = 0;
-const brand: string | brand = "";
-const category: string | category = "";*/
 
 function UpdateProduct() {
   const [acceptedFiles, setAcceptedFile] = useState<File[]>([]);
@@ -80,15 +58,14 @@ function UpdateProduct() {
   const [colour, setColour] = useState("");
   const [price, setPrice] = useState(0);
 
-  
-
-
-
   const { id } = useParams();
 
-  const { productIsLoading, productIsError, productIsSuccess, gettingProducts } = useAppSelector(
-    (state) => state.product
-  );
+  const {
+    productIsLoading,
+    productIsError,
+    productIsSuccess,
+    gettingProducts,
+  } = useAppSelector((state) => state.product);
 
   const dispatch = useAppDispatch();
 
@@ -100,22 +77,30 @@ function UpdateProduct() {
     resolver: yupResolver(schema),
   });
 
+  const notifyLoadError = () =>
+    toast.error("Failed to load! Something is wrong!");
+  const notify = () =>
+    toast.success("Product updated successfully!", { position: "top-center" });
+  const notifyError = () => toast.error("Failed to update product");
+
   useEffect(() => {
     if (id != undefined) {
       getOneProduct(id, dispatch)
         .then((response) => {
-          console.log(response.result);
+          console.log(response);
 
-          setTitle(response.result.title);
-          setPrice(response.result.price);
-          setQuantity(response.result.quantity);
-          setDescription(response.result.description);
-          setCategory(response.result.category._id);
-          setBrand(response.result.brand._id);
-          setTag(response.result.tag);
-          setColour(response.result.colour);
-
-         
+          if (response.productRetrieved) {
+            setTitle(response.result.title);
+            setPrice(response.result.price);
+            setQuantity(response.result.quantity);
+            setDescription(response.result.description);
+            setCategory(response.result.category._id);
+            setBrand(response.result.brand._id);
+            setTag(response.result.tag);
+            setColour(response.result.colour);
+          } else {
+            notifyLoadError();
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -125,15 +110,17 @@ function UpdateProduct() {
     /// dispatch(reset());
   }, []);
 
-
-
   useEffect(() => {
     getAllBrands(dispatch)
       .then((response) => {
-        console.log(response.result);
+        console.log(response);
         console.log("triggered");
 
-        setBrands(response.result.reverse());
+        if (response.brandsRetrieved) {
+          setBrands(response.result.reverse());
+        } else {
+          notifyLoadError();
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -141,10 +128,13 @@ function UpdateProduct() {
 
     getAllColours(dispatch)
       .then((response) => {
-        console.log(response.result);
-        console.log("triggered");
+        console.log(response);
 
-        setColours(response.result.reverse());
+        if (response.coloursRetrieved) {
+          setColours(response.result.reverse());
+        } else {
+          notifyLoadError();
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -152,46 +142,54 @@ function UpdateProduct() {
 
     getAllProductCategories(dispatch)
       .then((response) => {
-        console.log(response.result);
+        console.log(response);
 
-        setProductCategories(response.result.reverse());
+        if (response.productCatRetrieved) {
+          setProductCategories(response.result.reverse());
+        } else {
+          notifyLoadError();
+        }
       })
       .catch((err) => {
         console.log(err);
       });
 
-    dispatch(reset());
+   // dispatch(reset());
   }, []);
 
   return (
     <div
-      onSubmit={
-        (e) => {
-          e.preventDefault()
-          // const isempty = isQuillEmpty(product.description);
+      onSubmit={(e) => {
+        e.preventDefault();
+        // const isempty = isQuillEmpty(product.description);
 
-         dispatch(resetGettingProducts())
+        const productUpdate: any = {};
 
-          const productUpdate: any = {};
+        productUpdate["title"] = title;
+        productUpdate["brand"] = brand;
+        productUpdate["price"] = price;
+        productUpdate["category"] = category;
+        productUpdate["tag"] = tag;
+        productUpdate["quantity"] = quantity;
+        productUpdate["colour"] = colour;
+        productUpdate["description"] = description;
 
-          productUpdate["title"] = title;
-          productUpdate["brand"] = brand;
-          productUpdate["price"] = price;
-          productUpdate["category"] = category;
-          productUpdate["tag"] = tag;
-          productUpdate["quantity"] = quantity;
-          productUpdate["colour"] = colour;
-          productUpdate["description"] = description;
+        console.log(productUpdate);
 
-          console.log(productUpdate);
-
-          if (id !== undefined) {
-            updateProduct(id, productUpdate, dispatch);
-          }
+        if (id !== undefined) {
+          updateProduct(id, productUpdate, dispatch).then((response) => {
+            console.log(response);
+            if (response.productUpdated) {
+              notify();
+            } else {
+              notifyError();
+            }
+          });
         }
-      }
+      }}
       className={styles.product}
     >
+      <ToastContainer theme="light" />
       <div className={styles.productContainer}>
         <form>
           <h1>Edit Product</h1>
@@ -205,7 +203,7 @@ function UpdateProduct() {
           {errors.title && <p>Title is required.</p>}
 
           <input
-            value={price }
+            value={price}
             type="number"
             placeholder="Enter price"
             onChange={(e) => {
@@ -236,13 +234,17 @@ function UpdateProduct() {
           />
 
           <select
+            value={brand}
             onChange={(e) => {
               //  console.log("Updated brand " + updatebrand);
 
               setBrand(e.target.value);
             }}
           >
-            <option value="">Select Brand</option>
+            <option value="">
+              {" "}
+              {productIsLoading ? "Please wait..." : "Select brand"}
+            </option>
             {brands.map((item: any) => {
               return (
                 <option value={item._id} key={item._id}>
@@ -259,7 +261,9 @@ function UpdateProduct() {
               setCategory(e.target.value);
             }}
           >
-            <option value="">Select product category</option>
+            <option value="">
+              {productIsLoading ? "Please wait..." : "Select product category"}
+            </option>
             {productCategories.map((item: any) => {
               return (
                 <option value={item._id} key={item._id}>
@@ -289,7 +293,9 @@ function UpdateProduct() {
               setColour(e.target.value);
             }}
           >
-            <option value="">Select colour</option>
+            <option value="">
+              {productIsLoading ? "Please wait..." : "Select colour"}
+            </option>
             {colours.map((item: any) => {
               return (
                 <option value={item._id} key={item._id}>
@@ -330,17 +336,13 @@ function UpdateProduct() {
             )}
           </Dropzone>
 
-          <button disabled={productIsLoading}>Edit Product</button>
-          {(productIsSuccess && gettingProducts ===false) &&   (
-            <span className={tableStyles.success}>
-              Product Updated successfully.
-            </span>
-          )}
-          {productIsError && (
-            <span className={tableStyles.error}>
-              Something went wrong.Try again
-            </span>
-          )}
+          <button disabled={productIsLoading}>
+            {productIsLoading ? (
+              <span className={tableStyles.loader}></span>
+            ) : (
+              "Edit Product"
+            )}
+          </button>
         </form>
       </div>
     </div>
