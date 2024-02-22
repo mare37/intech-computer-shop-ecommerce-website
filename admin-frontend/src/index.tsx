@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import MainLayout from "./Layout/MainLayout";
+import { ChakraProvider } from "@chakra-ui/react";
 
 //pages
 import AddBrand from "./pages/brand/addbrand";
@@ -30,120 +31,116 @@ import Orders from "./pages/orders/orders";
 import Enquiries from "./pages/enquiries/enquiries";
 import Customers from "./pages/customers/customers";
 import Dashboard from "./pages/dashboard/dashboard";
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
     path: "/admin",
-    element: <MainLayout/>,
+    element: <MainLayout />,
     children: [
       {
         path: "addbrand",
-        element: < AddBrand />,
+        element: <AddBrand />,
       },
       {
         path: "updatebrand/:id",
-        element: < UpdateBrand />,
+        element: <UpdateBrand />,
       },
       {
         path: "addcolor",
-        element: < AddColour />,
+        element: <AddColour />,
       },
       {
         path: "updatecolour/:id",
-        element: < AddColour />,
+        element: <AddColour />,
       },
       {
         path: "productcategory",
-        element: < ProductCategory />,
+        element: <ProductCategory />,
       },
       {
         path: "updateproductcategory/:id",
-        element: < ProductCategory />,
+        element: <ProductCategory />,
       },
       {
         path: "brandlist",
-        element: < BrandList />,
+        element: <BrandList />,
       },
       {
         path: "colourlist",
-        element: < ColourList />,
+        element: <ColourList />,
       },
       {
         path: "productcategorylist",
-        element: < ProductCategoryList />,
+        element: <ProductCategoryList />,
       },
       {
         path: "addproduct",
-        element: < AddProduct />,
+        element: <AddProduct />,
       },
       {
         path: "updateproduct/:id",
-        element: < UpdateProduct />,
+        element: <UpdateProduct />,
       },
 
       {
         path: "productlist",
-        element: < ProductList />,
+        element: <ProductList />,
       },
       {
         path: "writeblog",
-        element: < WriteBlog />,
+        element: <WriteBlog />,
       },
 
       {
         path: "updateblog/:id",
-        element: < UpdateBlog/>,
+        element: <UpdateBlog />,
       },
       {
         path: "addblogcategory",
-        element: < AddBlogCategory />,
+        element: <AddBlogCategory />,
       },
       {
         path: "updateblogcategory/:id",
-        element: < AddBlogCategory />,
+        element: <AddBlogCategory />,
       },
       {
         path: "blogcategorylist",
-        element: < BlogCategoryList />,
+        element: <BlogCategoryList />,
       },
       {
         path: "bloglist",
-        element: < BlogList />,
+        element: <BlogList />,
       },
       {
         path: "addcoupon",
-        element: < AddCoupon />,
+        element: <AddCoupon />,
       },
       {
         path: "updatecoupon/:id",
-        element: < UpdateCoupon />,
+        element: <UpdateCoupon />,
       },
       {
         path: "couponlist",
-        element: < CouponList />,
+        element: <CouponList />,
       },
       {
         path: "orders",
-        element: < Orders />,
+        element: <Orders />,
       },
       {
         path: "enquiries",
-        element: < Enquiries />,
+        element: <Enquiries />,
       },
       {
         path: "customers",
-        element: < Customers />,
+        element: <Customers />,
       },
       {
         path: "dashboard",
-        element: < Dashboard />,
+        element: <Dashboard />,
       },
-    ]
+    ],
   },
 ]);
 
@@ -152,10 +149,14 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
+       <ChakraProvider   resetCSS={false}    >
     <Provider store={store}>
-    <RouterProvider router={router} />
-      <App />
+      <RouterProvider router={router} />
+   
+        <App />
+     
     </Provider>
+     </ChakraProvider>
   </React.StrictMode>
 );
 

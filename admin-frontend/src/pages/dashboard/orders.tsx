@@ -1,6 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./orders.module.scss";
 import tableStyles from "../table.module.scss";
+import statusCell from "./statuscell";
+
+import { useAppDispatch, useAppSelector } from "../../hooks";
+
+import { getAllOrders } from "../../api/orders";
+
+
+
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -13,320 +22,115 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { BiEditAlt } from "react-icons/bi";
 
-const DATA = [
-  {
-    sNo: 1,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 2,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
 
-  {
-    sNo: 3,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
 
-  {
-    sNo: 4,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 5,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
+interface orderby{
+  firstName:string
+  lastName: string
+}
 
-  {
-    sNo: 6,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
+interface orderStatus{
+  status:string
+  colour: string
+}
 
-  {
-    sNo: 7,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 8,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
+interface paymentIntent {
+  amount:number
+}
 
-  {
-    sNo: 9,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 10,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 11,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 12,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 1,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 2,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 3,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 4,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 5,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 6,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 7,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 8,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 9,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 10,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 11,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 12,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 1,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 2,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 3,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 4,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 5,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 6,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 7,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 8,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 9,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 10,
-    name: "Will",
-    product: ["o",'fcfhhv'],
-    date: "6/6/2023",
-    amount: "555",
-  },
-  {
-    sNo: 11,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-
-  {
-    sNo: 12,
-    name: "Will",
-    product: ["g"],
-    date: "6/6/2023",
-    amount: "555",
-  },
-];
 
 type Order = {
-  sNo: number;
-  name: string;
-  product: string[];
-  date: string;
-  amount: string;
+  orderby: orderby;
+  orderStatus: orderStatus;
+  paymentIntent: paymentIntent;
+  createdAt: string;
+ 
 };
 
 const columnHelper = createColumnHelper<Order>();
 
 const columns = [
-  columnHelper.accessor("sNo", {
-    header: "Serial No.",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("name", {
+ 
+  columnHelper.accessor("orderby", {
     header: "Name",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      return info.getValue().firstName + " " + info.getValue().lastName
+    }
+    ,
   }),
 
-  columnHelper.accessor("product", {
-    header: "Products",
-    cell: (info) => info.getValue(),
+  columnHelper.accessor("orderStatus", {
+    header: "Order Status",
+    cell: statusCell,
+    size: 2000
   }),
-  columnHelper.accessor("date", {
+  columnHelper.accessor("createdAt", {
     header: "Date",
-    cell: (info) => info.getValue(),
+    //cell: (info) => info.getValue() ,
+    cell: (info) => {
+      const dateObject = new Date(info.row.original.createdAt);
+      const date = dateObject.toLocaleString("en-UK", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      return date;
+    },
+
   }),
 
-  columnHelper.accessor("amount", {
+  columnHelper.accessor("paymentIntent", {
     header: "Amount",
-    cell: (info) => info.getValue(),
+    cell: (info) => info.getValue().amount,
   }),
 ];
 
 function Orders() {
-  const [data, setData] = useState(DATA);
+  const [data, setData] = useState<any>([]);
+
+  const dispatch = useAppDispatch();
+
+  const {isLoading, isSuccess} = useAppSelector((state)=> state.order)
+
+
+useEffect(()=>{
+
+  getAllOrders(dispatch).then((response)=>{
+    console.log(response);
+    if(response.ordersRetrieved ){
+      setData(response.result)
+    }
+    
+  })
+
+
+
+
+
+
+},[])
+
+
+useEffect(()=>{
+  console.log("triggered");
+  
+  getAllOrders(dispatch).then((response)=>{
+    console.log(response);
+    if(response.ordersRetrieved ){
+      setData(response.result)
+    }
+    
+    
+  })
+},[isSuccess])
+
+
+
+
+
+
+
+
 
   const table = useReactTable({
     data,
@@ -335,7 +139,7 @@ function Orders() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  console.log(table.getRowModel().rows);
+ // console.log(table.getRowModel().rows);
 
   return (
     <div className={styles.orders}>
