@@ -1,5 +1,12 @@
 const mongoose = require("mongoose"); // Erase if already required
 
+
+type orderStatus={
+  status:string
+  colour:string
+
+}
+
 // Declare the Schema of the Mongo model
 var orderSchema = new mongoose.Schema(
   {
@@ -15,15 +22,14 @@ var orderSchema = new mongoose.Schema(
     ],
     paymentIntent: {},
     orderStatus: {
-      type: String,
-      default: "Not Processed",
+      type: Object,
+      default: {status: "Not Processed", colour: "red"},
       enum: [
-        "Not Processed",
-        "Cash on Delivery", 
-        "Processing",
-        "Dispatched",
-        "Cancelled",
-        "Delivered",
+        {status: "Not Processed", colour: "red"},
+        {status: "Processing", colour: "blue"},
+        {status: "Dispatched", colour: "orange"},
+        {status: "Cancelled", colour: "red"},
+        {status: "Delivered", colour: "green"},
       ],
     },
     orderby: {

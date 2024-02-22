@@ -24,6 +24,7 @@ import {
   getOneCart,
   createOrder,
   getOrders,
+  updateOrderStatus,
   getMyOrders,
   addToWishList,
   applyCoupon
@@ -58,11 +59,12 @@ router.get("/logout", validateToken, logOut);
 router.post("/cart", useCart);
 router.delete("/empty-cart/:id", deleteCart);
 router.get("/cart/:id", validateToken,  getOneCart);
-router.post("/create-order", validateToken, createOrder)
-router.get("/orders",validateToken,isAdmin, getOrders )
-router.get("/orders/:userId",validateToken,getMyOrders )
-router.post("/wishlist", validateToken, addToWishList);
-router.post("/applycoupon", validateToken, applyCoupon);
+router.post("/create-order",  createOrder)
+router.get("/orders", getOrders )
+router.put("/orders/:orderId", updateOrderStatus )
+router.get("/orders/:userId",getMyOrders )
+router.post("/wishlist",  addToWishList);
+router.post("/applycoupon",  applyCoupon);
 
 
 export default router;
