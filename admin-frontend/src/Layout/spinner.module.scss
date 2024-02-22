@@ -1,0 +1,154 @@
+.mainLayOut{
+   position: relative;
+   overflow: hidden;
+    
+   
+      /* background-color:rgb(243, 242, 242); */
+     
+   }
+   
+   
+   .popup{
+   
+      position: fixed;
+      //background-color: aqua;
+      height: 100vh;
+      width: 100%;
+      z-index: 10;
+
+     
+   
+     
+   
+    //  display: flex;
+     // flex-direction: column;
+    //  align-items: center;
+    //  justify-content: center;
+   
+      background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+   
+   
+      div{
+         background-color: white;
+         height: 130px;
+         margin-top: 20%;
+         margin-left: 20px;
+         margin-right: 20px;
+   
+         padding: 10px;
+         border-radius: 5px; 
+   
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+      }
+        section{
+         height: 130px;
+         margin-top: 50%;
+         margin-left: 20px;
+         margin-right: 20px;
+   
+         padding: 10px;
+         border-radius: 5px; 
+   
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+   
+        }
+      
+      
+   }
+   
+   .removePopup{
+      
+      position: absolute;
+      background-color: aqua;
+      height: 100%;
+      width: 100%;
+      
+      left: 100%;
+   
+   }
+   
+   .loader {
+      width: 55px;
+      height: 55px;
+      border: 5px dotted #e4e3e3;
+      border-radius: 50%;
+     // display: inline-block;
+      position: relative;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+   
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    } 
+   
+   
+   @media (min-width: 768px) {
+   
+   
+      .popup{
+   
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+      
+      
+         div{
+   
+            width: 70%;
+   
+         }
+
+         section{
+            margin-top: 15%;
+
+         }
+   
+   
+      }
+   
+   
+   
+   }
+   
+   
+   @media (min-width: 768px) {
+   
+   
+      .popup{
+   
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+        
+        
+           div{
+            height: 160px;
+            margin-top: 10%;
+              width: 50%;
+     
+           }
+     
+     
+        }
+     
+   
+   
+   }
+
+
+   @media (min-width: 1024px) {
+
+   }
+   
