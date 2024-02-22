@@ -792,12 +792,15 @@ export const applyCoupon = async (req: Request, res: Response) => {
     const cartTotalAfterDiscount =
       cart[0].cartTotal - cart[0].cartTotal * (coupon[0].discount / 100);
 
+    const result = await cartModel.findOneAndUpdate(
+      { orderby: userLoggedInID },
+      {
+        totalAfterDiscount: cartTotalAfterDiscount,
+      },
+      { new: true }
+    );
 
-      const result = await cartModel.findOneAndUpdate({orderby: userLoggedInID},{
-        totalAfterDiscount: cartTotalAfterDiscount
-      },{new: true})
-
-    res.send({couponApplied: true,result: result});
+    res.send({ couponApplied: true, result: result });
   }
 };
 
@@ -807,16 +810,41 @@ export const getOrders = async (req: Request, res: Response) => {
       { path: "orderby", select: "firstName lastName mobile email" },
     ];
 
+    
+
     const result = await orderModel
       .find()
       .populate(populateQuery)
-      .populate("products.product");
+      .populate({
+        path: "products",
+        populate: { path: "product", populate: { path: "colour brand category" } },
+      });
 
-    res.send(result);
+    res.send({ ordersRetrieved: true, result: result });
   } catch (error) {
-    res.send(error);
+    res.send({ ordersRetrieved: false, error: error });
   }
 };
+
+
+export const updateOrderStatus = async (req: Request, res: Response)=>{
+  const { orderId} = req.params;
+
+  const {  orderStatus }  = req.body
+
+  try {
+    const result = await  orderModel.findByIdAndUpdate(
+      { _id: orderId },
+      { orderStatus: orderStatus },
+      { new: true }
+    );
+    res.send({orderStatusUpdated: true, result: result });
+  } catch (error) {
+    res.send({orderStatusUpdated: false, error: error });
+  }
+
+
+}
 
 export const getMyOrders = async (req: Request, res: Response) => {
   const { userId } = req.params;
