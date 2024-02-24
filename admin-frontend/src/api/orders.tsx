@@ -40,6 +40,31 @@ export const getAllOrders = async (dispatch: any) => {
 
 
 
+
+export const getOrdersWithoutLoading = async (dispatch: any) => {
+  
+  
+
+  try {
+    const result = await axios.get(`${base_url}orders`);
+
+    console.log(result.data);
+    if (result.data.ordersRetrieved) {
+      
+    } else {
+      dispatch(error());
+    }
+    return result.data;
+  } catch (err) {
+    console.log(err);
+
+    dispatch(error());
+    return { ordersRetrieved: false };
+  }
+};
+
+
+
 export const updateOrderStatus = async (
   id: string,
   orderStatus:orderStatus,
@@ -49,7 +74,7 @@ export const updateOrderStatus = async (
     dispatch(reset());
   };
 
-  dispatch(loading()); 
+ // dispatch(loading()); 
   dispatch(setSpinnerToTrue())
   try {
     const result = await axios.put(`${base_url}orders/${id}`, {
@@ -71,6 +96,29 @@ export const updateOrderStatus = async (
 
     dispatch(error());
     return { orderStatusUpdated: false };
+  }
+};
+
+
+
+export const removeOrder = async (id: string, dispatch: any) => {
+  dispatch(loading());
+  try {
+    const result = await axios.put(`${base_url}orders/remove/${id}`);
+
+    console.log(result);
+
+    if (result.data.orderRemoved) {
+      dispatch(success());
+    } else {
+      dispatch(error());
+    }
+    return result.data
+  } catch (err) {
+    dispatch(error());
+
+    console.log(error);
+    return {orderRemoved: false}
   }
 };
 

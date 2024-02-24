@@ -813,7 +813,7 @@ export const getOrders = async (req: Request, res: Response) => {
     
 
     const result = await orderModel
-      .find()
+      .find({status:"Active"})
       .populate(populateQuery)
       .populate({
         path: "products",
@@ -845,6 +845,28 @@ export const updateOrderStatus = async (req: Request, res: Response)=>{
 
 
 }
+
+export const removeOrder = async (req: Request, res: Response)=>{
+  //Order to be removed id
+  const { orderToremovedId} = req.params;
+
+  
+
+  try {
+    const result = await  orderModel.findByIdAndUpdate(
+      { _id: orderToremovedId },
+      { status: "Inactive" },
+      { new: true }
+    );
+    res.send({orderRemoved: true, result: result });
+  } catch (error) {
+    res.send({orderRemoved: false, error: error });
+  }
+
+
+}
+
+
 
 export const getMyOrders = async (req: Request, res: Response) => {
   const { userId } = req.params;
