@@ -12,6 +12,7 @@ import { deleteProduct } from "../api/product";
 import { deleteBlogCategory } from "../api/blogcategory";
 import { deleteBlog } from "../api/blog";
 import { removeCoupon } from "../api/coupon";
+import { removeOrder } from "../api/orders";
 import { useState } from "react";
 
 function Popup() {
@@ -129,6 +130,22 @@ function Popup() {
         console.log(id);
 
         dispatch(setDeleteActionToTrue());
+      });
+    }
+
+    if (window.location.pathname === "/admin/orders") {
+      dispatch(setPopUpToFalse());
+
+      removeOrder(id, dispatch).then((response) => {
+        console.log(id);
+
+        if( response.orderRemoved){
+          dispatch(setDeleteActionToTrue());
+        }else{
+          console.log("Toggle delete action");
+          
+          dispatch(setDeleteActionToFalse())
+        }
       });
     }
   };

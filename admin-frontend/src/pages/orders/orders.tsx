@@ -1,6 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import isOnline from "is-online";
 import styles from "./orders.module.scss";
-import tableStyles from "../table.module.scss"
+import tableStyles from "../table.module.scss";
+import statusCell from "./statuscell";
+import { ToastContainer, toast } from "react-toastify";
+
+import Loading from "../../Layout/Loading/loading";
+import ConnectionError from "../../Layout/ConnectionError/connectionerror";
+
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { setPopUpToTrue, setId } from "../../redux/popupSlice";
+import { resetSetDeleteAction } from "../../redux/deleteActionSlice";
+
+import { getAllOrders, getOrdersWithoutLoading } from "../../api/orders";
+
+import { IoFileTrayOutline } from "react-icons/io5";
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -13,57 +28,146 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { BiEditAlt } from "react-icons/bi";
 
+interface orderby {
+  firstName: string;
+  lastName: string;
+}
 
-const DATA = [
-  {
-    sNo: 1,
-    title: "4HQV",
-    discount: 5,
-    expiry: "6/6/2023"
-  },
-  {
-    sNo: 2,
-    title: "4HQV",
-    discount: 5,
-    expiry: "6/6/2023"
-  },
- 
-];
+interface orderStatus {
+  status: string;
+  colour: string;
+}
 
-type Coupon= {
-  sNo: number;
-  title: string;
-  discount:number,
-  expiry:string
+interface paymentIntent {
+  amount: number;
+}
 
+type Order = {
+  _id: number;
+  orderby: orderby;
+  orderStatus: orderStatus;
+  paymentIntent: paymentIntent;
+  createdAt: string;
 };
 
-const columnHelper = createColumnHelper<Coupon>();
-
-
+const columnHelper = createColumnHelper<Order>();
 
 const columns = [
-  columnHelper.accessor("sNo", {
-    header: "Serial No.",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("title", {
+  columnHelper.accessor("orderby", {
     header: "Name",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      return info.getValue().firstName + " " + info.getValue().lastName;
+    },
   }),
 
-  columnHelper.accessor("discount", {
-    header: "Discount",
-    cell: (info) => info.getValue(),
+  columnHelper.accessor("orderStatus", {
+    header: "Order Status",
+    cell: statusCell,
+    size: 2000,
   }),
-  columnHelper.accessor("expiry", {
-    header: "Expiry",
-    cell: (info) => info.getValue(),
+  columnHelper.accessor("createdAt", {
+    header: "Date",
+    //cell: (info) => info.getValue() ,
+    cell: (info) => {
+      const dateObject = new Date(info.row.original.createdAt);
+      const date = dateObject.toLocaleString("en-UK", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      return date;
+    },
+  }),
+
+  columnHelper.accessor("paymentIntent", {
+    header: "Amount",
+    cell: (info) => info.getValue().amount,
   }),
 ];
 
 function Orders() {
-  const [data, setData] = useState(DATA);
+  const [online, setOnline] = useState<boolean>();
+  const [showError, setShowError] = useState<boolean>();
+  const [data, setData] = useState<any>([]);
+  const [fetchingData, setFetchingData] = useState(false)
+
+  const dispatch = useAppDispatch();
+
+  const { isLoading, isSuccess } = useAppSelector((state) => state.order);
+  const {deleteAction} = useAppSelector((state)=>state.deleteAction)
+
+  const notifyError = () =>
+    toast.error("Failed to load orders! Something is wrong!", {
+      autoClose: false,
+    });
+
+
+    const notifyDeleteError = () =>
+    toast.error("Failed to delete! Something is wrong!", {
+      autoClose: false,
+    });
+  useEffect(() => {
+    isOnline()
+      .then((response: boolean) => {
+        setOnline(response);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    getAllOrders(dispatch).then((response) => {
+      console.log(response);
+      if (response.ordersRetrieved) {
+        setData(response.result);
+      } else {
+        notifyError();
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log("triggered");
+
+    getOrdersWithoutLoading(dispatch).then((response) => {
+      console.log(response);
+      if (response.ordersRetrieved) {
+        setData(response.result);
+      } else {
+        notifyError();
+      }
+    });
+  }, [isSuccess]);
+
+
+  useEffect(() => {
+    if (deleteAction === true) {
+      getAllOrders(dispatch).then((response) => {
+        console.log(response);
+        if (response.ordersRetrieved) {
+          setData(response.result);
+        } else {
+          notifyError();
+        }
+      });
+     
+    }
+
+
+    if (deleteAction === false) {
+      notifyDeleteError();
+    }
+
+
+
+    dispatch(resetSetDeleteAction());
+  }, [deleteAction]);
+
+  // Hide error component when page loads and internet connection exists
+  useEffect(() => {
+    const timer = setTimeout(() => setShowError(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const table = useReactTable({
     data,
@@ -72,73 +176,112 @@ function Orders() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  console.log(table.getRowModel().rows);
+  // console.log(table.getRowModel().rows);
 
   return (
-    <div className={styles.orders}>
-      <div className={styles.ordersContainer}>
-        <div className={tableStyles.table}>
-          <h1>Orders</h1>
-          <section>
-            {table.getHeaderGroups().map((headerGroup) => {
-              return (
-                <div key={headerGroup.id} className={tableStyles.headerContainer}>
-                  {headerGroup.headers.map((header) => {
+    <div>
+      {online ? (
+        isLoading ? (
+          <Loading />
+        ) : (
+          <div className={styles.orders}>
+            <ToastContainer theme="light" position="top-center" />
+            <div className={styles.ordersContainer}>
+              <div className={tableStyles.table}>
+                <h1 className={tableStyles.heading}>Orders</h1>
+                <section className={tableStyles.boxShadow}>
+                  {table.getHeaderGroups().map((headerGroup) => {
                     return (
-                      <div key={header.id} className={tableStyles.header}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      <div
+                        key={headerGroup.id}
+                        className={styles.headerContainer}
+                      >
+                        {headerGroup.headers.map((header) => {
+                          return (
+                            <div key={header.id} className={styles.header}>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </div>
+                          );
+                        })}
+                        <div className={styles.header}>Action</div>
                       </div>
                     );
                   })}
-                  <div className={tableStyles.header}>Action</div>
-                </div>
-              );
-            })}
-          </section>
+                </section>
 
-          <section className={tableStyles.tableData}>
-            {table.getRowModel().rows.map((row) => (
-              <div className={tableStyles.dataContainer} key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <div className={tableStyles.data} key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                {data.length === 0 ? (
+                  <div className={tableStyles.noData}>
+                    {" "}
+                    <IoFileTrayOutline
+                      className={tableStyles.doDataIcon}
+                    />{" "}
+                    <p>No data</p>{" "}
                   </div>
-                ))}
-                <div className={tableStyles.data}>
-                  <BiEditAlt className={tableStyles.edit} size={30} />
-                  <BiSolidTrashAlt className={tableStyles.trash} size={30} />
+                ) : (
+                  <section className={tableStyles.boxShadow}>
+                    {table.getRowModel().rows.map((row) => (
+                      <div className={styles.dataContainer} key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <div className={styles.data} key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                        <div className={styles.data}>
+                          <BiEditAlt className={styles.edit} size={30} />
+                          <BiSolidTrashAlt className={styles.trash} size={30} 
+
+                              onClick={() => {
+                                dispatch(setPopUpToTrue());
+                                dispatch(setId({ id: row.original._id }));
+                                // setDeleteButton(true)
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                              }}
+                          
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </section>
+                )}
+
+                <br />
+
+                <section>
+                  Page {table.getState().pagination.pageIndex + 1} of{" "}
+                  {table.getPageCount()}
+                </section>
+                <br />
+                <div className={tableStyles.navigatepages}>
+                  <button
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                  >
+                    {"<"}
+                  </button>
+                  <button
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                  >
+                    {">"}
+                  </button>
                 </div>
               </div>
-            ))}
-          </section>
-          <br />
-
-          <section>
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </section>
-          <br />
-          <div className={tableStyles.navigatepages}>
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {"<"}
-            </button>
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              {">"}
-            </button>
+            </div>
           </div>
-        </div>
-      </div>
+        )
+      ) : showError ? (
+        <ConnectionError />
+      ) : (
+        ""
+      )}
     </div>
   );
 }
 
-export default Orders
+export default Orders;
