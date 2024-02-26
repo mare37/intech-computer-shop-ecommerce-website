@@ -23,6 +23,7 @@ import {
   deleteCart,
   getOneCart,
   createOrder,
+  getOneOrder,
   getOrders,
   removeOrder,
   updateOrderStatus,
@@ -50,7 +51,7 @@ router.post(
   resetPassword
 );
 
-router.get("/getallusers", validateToken, isAdmin, getAllActiveUsers);
+router.get("/getallusers", getAllActiveUsers);
 router.get("/getallinactiveusers", validateToken, getAllInactiveUsers);
 router.get("/getoneuser/:id", getOneuser);
 router.delete("/getoneuser/:id", deleteOneuser);
@@ -62,6 +63,7 @@ router.delete("/empty-cart/:id", deleteCart);
 router.get("/cart/:id", validateToken,  getOneCart);
 router.post("/create-order",  createOrder)
 router.get("/orders", getOrders )
+router.get("/orders/one-order/:id", getOneOrder )
 router.put("/orders/:orderId", updateOrderStatus )
 router.put("/orders/remove/:orderToremovedId", removeOrder )
 router.get("/orders/:userId",getMyOrders )

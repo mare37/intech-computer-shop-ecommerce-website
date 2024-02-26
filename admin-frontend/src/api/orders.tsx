@@ -123,3 +123,26 @@ export const removeOrder = async (id: string, dispatch: any) => {
 };
 
 
+export const getOneOrder = async (id: string, dispatch: any) => {
+  dispatch(loading());
+  try {
+    const result = await axios.get(`${base_url}orders/one-order/${id}`);
+
+    console.log(result);
+
+    if (result.data.orderRetreived) {
+      dispatch(success());
+    } else {
+      dispatch(error());
+    }
+    return result.data
+  } catch (err) {
+    dispatch(error());
+
+    console.log(error);
+    return {orderRetreived: false}
+  }
+};
+
+
+
