@@ -11,10 +11,15 @@ import ConnectionError from "../../Layout/ConnectionError/connectionerror";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { setPopUpToTrue, setId } from "../../redux/popupSlice";
 import { resetSetDeleteAction } from "../../redux/deleteActionSlice";
+import { setorderItemToTrue, setOrderId } from "../../redux/orderItemSlice";
 
 import { getAllOrders, getOrdersWithoutLoading } from "../../api/orders";
 
 import { IoFileTrayOutline } from "react-icons/io5";
+import { BiSolidTrashAlt } from "react-icons/bi";
+import { BiEditAlt } from "react-icons/bi";
+
+import { IoIosOpen } from "react-icons/io";
 
 import {
   useReactTable,
@@ -24,9 +29,6 @@ import {
   getPaginationRowModel,
 } from "@tanstack/react-table";
 import type { ColumnDef } from "@tanstack/react-table";
-
-import { BiSolidTrashAlt } from "react-icons/bi";
-import { BiEditAlt } from "react-icons/bi";
 
 interface orderby {
   firstName: string;
@@ -89,20 +91,19 @@ function Orders() {
   const [online, setOnline] = useState<boolean>();
   const [showError, setShowError] = useState<boolean>();
   const [data, setData] = useState<any>([]);
-  const [fetchingData, setFetchingData] = useState(false)
+  const [fetchingData, setFetchingData] = useState(false);
 
   const dispatch = useAppDispatch();
 
   const { isLoading, isSuccess } = useAppSelector((state) => state.order);
-  const {deleteAction} = useAppSelector((state)=>state.deleteAction)
+  const { deleteAction } = useAppSelector((state) => state.deleteAction);
 
   const notifyError = () =>
     toast.error("Failed to load orders! Something is wrong!", {
       autoClose: false,
     });
 
-
-    const notifyDeleteError = () =>
+  const notifyDeleteError = () =>
     toast.error("Failed to delete! Something is wrong!", {
       autoClose: false,
     });
@@ -139,7 +140,6 @@ function Orders() {
     });
   }, [isSuccess]);
 
-
   useEffect(() => {
     if (deleteAction === true) {
       getAllOrders(dispatch).then((response) => {
@@ -150,15 +150,11 @@ function Orders() {
           notifyError();
         }
       });
-     
     }
-
 
     if (deleteAction === false) {
       notifyDeleteError();
     }
-
-
 
     dispatch(resetSetDeleteAction());
   }, [deleteAction]);
@@ -180,7 +176,7 @@ function Orders() {
 
   return (
     <div>
-      {online ? (
+      {online === true || online === false ?(
         isLoading ? (
           <Loading />
         ) : (
@@ -233,16 +229,24 @@ function Orders() {
                           </div>
                         ))}
                         <div className={styles.data}>
-                          <BiEditAlt className={styles.edit} size={30} />
-                          <BiSolidTrashAlt className={styles.trash} size={30} 
-
-                              onClick={() => {
-                                dispatch(setPopUpToTrue());
-                                dispatch(setId({ id: row.original._id }));
-                                // setDeleteButton(true)
-                                window.scrollTo({ top: 0, behavior: "smooth" });
-                              }}
-                          
+                          <IoIosOpen
+                            className={styles.open}
+                            size={30}
+                            onClick={() => {
+                              dispatch(setorderItemToTrue());
+                              dispatch(setOrderId({ id: row.original._id })); 
+                              // setDeleteButton(true)
+                            }}
+                          />
+                          <BiSolidTrashAlt
+                            className={styles.trash}
+                            size={30}
+                            onClick={() => {
+                              dispatch(setPopUpToTrue());
+                              dispatch(setId({ id: row.original._id }));
+                              // setDeleteButton(true)
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
                           />
                         </div>
                       </div>

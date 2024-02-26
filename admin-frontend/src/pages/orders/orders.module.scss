@@ -10,11 +10,14 @@
 
 .ordersContainer{
     height: 100%;
-   
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 
 
     
-}
+
 
 
 .table{
@@ -99,8 +102,16 @@
     
 }
 
+.open{
+    color:rgb(134, 185, 202);
+    margin-right: 30px;
+    cursor: pointer;
+}
+
+
 .trash{
     color: red;
+    cursor: pointer;
 }
 
 

@@ -14,7 +14,6 @@ import { validationResult } from "express-validator";
 
 import validateMongoID from "../middlewares/validateMongoId";
 
-
 export const register = async (req: Request, res: Response) => {
   console.log(req.body);
 
@@ -321,7 +320,7 @@ export const changePassword = async (req: Request, res: Response) => {
 
 //--------------------------------------------------------------------------------------------
 
-export const forgotpassword = async (req: Request, res: Response) => { 
+export const forgotpassword = async (req: Request, res: Response) => {
   const { email } = req.body;
   //const date = new Date();
   // console.log(email);
@@ -712,7 +711,6 @@ export const createOrder = async (req: Request, res: Response) => {
     let finalAmount;
 
     if (appliedCoupon) {
-
       finalAmount = cart.totalAfterDiscount;
       //console.log(appliedCoupon);
     } else {
@@ -810,14 +808,15 @@ export const getOrders = async (req: Request, res: Response) => {
       { path: "orderby", select: "firstName lastName mobile email" },
     ];
 
-    
-
     const result = await orderModel
-      .find({status:"Active"})
+      .find({ status: "Active" })
       .populate(populateQuery)
       .populate({
         path: "products",
-        populate: { path: "product", populate: { path: "colour brand category" } },
+        populate: {
+          path: "product",
+          populate: { path: "colour brand category" },
+        },
       });
 
     res.send({ ordersRetrieved: true, result: result });
@@ -826,47 +825,67 @@ export const getOrders = async (req: Request, res: Response) => {
   }
 };
 
+export const updateOrderStatus = async (req: Request, res: Response) => {
+  const { orderId } = req.params;
 
-export const updateOrderStatus = async (req: Request, res: Response)=>{
-  const { orderId} = req.params;
-
-  const {  orderStatus }  = req.body
+  const { orderStatus } = req.body;
 
   try {
-    const result = await  orderModel.findByIdAndUpdate(
+    const result = await orderModel.findByIdAndUpdate(
       { _id: orderId },
       { orderStatus: orderStatus },
       { new: true }
     );
-    res.send({orderStatusUpdated: true, result: result });
+    res.send({ orderStatusUpdated: true, result: result });
   } catch (error) {
-    res.send({orderStatusUpdated: false, error: error });
+    res.send({ orderStatusUpdated: false, error: error });
   }
+};
 
-
-}
-
-export const removeOrder = async (req: Request, res: Response)=>{
+export const removeOrder = async (req: Request, res: Response) => {
   //Order to be removed id
-  const { orderToremovedId} = req.params;
-
-  
+  const { orderToremovedId } = req.params;
 
   try {
-    const result = await  orderModel.findByIdAndUpdate(
+    const result = await orderModel.findByIdAndUpdate(
       { _id: orderToremovedId },
       { status: "Inactive" },
       { new: true }
     );
-    res.send({orderRemoved: true, result: result });
+    res.send({ orderRemoved: true, result: result });
   } catch (error) {
-    res.send({orderRemoved: false, error: error });
+    res.send({ orderRemoved: false, error: error });
   }
+};
 
+export const getOneOrder = async (req: Request, res: Response) => {
+  //Order to be removed id
+  const { id } = req.params;
 
-}
+  var populateQuery = [
+    { path: "orderby", select: "firstName lastName mobile email" },
+    { path: "paymentIntent" },
+    { path: "orderStatus" },
+  ];
 
+  try {
+    const result = await orderModel
+      .findById({ _id: id }, { new: true })
+      .populate(populateQuery)
+      .populate({
+        path: "products",
+        populate: {
+          path: "product",
+          populate: { path: "colour brand category" },
+        },
+      });
+    console.log(result);
 
+    res.send({ orderRetreived: true, result: result });
+  } catch (error) {
+    res.send({ orderRetreived: false, error: error });
+  }
+};
 
 export const getMyOrders = async (req: Request, res: Response) => {
   const { userId } = req.params;

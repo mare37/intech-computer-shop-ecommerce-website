@@ -6,7 +6,8 @@ import Navbar from "./Navbar/Navbar";
 import Sidebar from "./Sidebar/Sidebar";
 
 import Popup from "./popup";
-import Spinner from "./spinner";
+import Spinner from "./Spinner/spinner";
+import OrderItem from "./OrderItem/orderitem";
 
 import Loading from "./Loading/loading";
 
@@ -22,6 +23,7 @@ function MainLayout() {
       <Popup />
 
       <Spinner/>
+      <OrderItem/>
       
 
     
