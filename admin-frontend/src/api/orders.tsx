@@ -2,16 +2,22 @@ import axios from "axios";
 import { base_url } from "../utils/baseurl";
 import { useAppDispatch } from "../hooks";
 
-import { loading, error, success, reset } from "../redux/ordersSlice";
-import { setSpinnerToTrue,setSpinnerToFalse } from "../redux/spinnerSlice";
+import {
+  loading,
+  error,
+  success,
+  reset,
+  loadingSingleOrder,
+  singleOrderSuccess,
+  singleOrderError,
+  resetSingleOrder,
+} from "../redux/ordersSlice";
+import { setSpinnerToTrue, setSpinnerToFalse } from "../redux/spinnerSlice";
 
-
-interface orderStatus{
-  status:string,
-  colour: string
+interface orderStatus {
+  status: string;
+  colour: string;
 }
-
-
 
 export const getAllOrders = async (dispatch: any) => {
   const setReset = () => {
@@ -38,19 +44,12 @@ export const getAllOrders = async (dispatch: any) => {
   }
 };
 
-
-
-
 export const getOrdersWithoutLoading = async (dispatch: any) => {
-  
-  
-
   try {
     const result = await axios.get(`${base_url}orders`);
 
     console.log(result.data);
     if (result.data.ordersRetrieved) {
-      
     } else {
       dispatch(error());
     }
@@ -63,30 +62,27 @@ export const getOrdersWithoutLoading = async (dispatch: any) => {
   }
 };
 
-
-
 export const updateOrderStatus = async (
   id: string,
-  orderStatus:orderStatus,
+  orderStatus: orderStatus,
   dispatch: any
 ) => {
   const setReset = () => {
     dispatch(reset());
   };
 
- // dispatch(loading()); 
-  dispatch(setSpinnerToTrue())
+  // dispatch(loading());
+  dispatch(setSpinnerToTrue());
   try {
     const result = await axios.put(`${base_url}orders/${id}`, {
       orderStatus: orderStatus,
     });
 
-   
     if (result.data.orderStatusUpdated) {
       console.log(result.data);
-    
-     // dispatch(success());
-     // dispatch(reset());
+
+      // dispatch(success());
+      // dispatch(reset());
     } else {
       //dispatch(error());
     }
@@ -98,8 +94,6 @@ export const updateOrderStatus = async (
     return { orderStatusUpdated: false };
   }
 };
-
-
 
 export const removeOrder = async (id: string, dispatch: any) => {
   dispatch(loading());
@@ -113,36 +107,35 @@ export const removeOrder = async (id: string, dispatch: any) => {
     } else {
       dispatch(error());
     }
-    return result.data
+    return result.data;
   } catch (err) {
     dispatch(error());
 
     console.log(error);
-    return {orderRemoved: false}
+    return { orderRemoved: false };
   }
 };
 
-
 export const getOneOrder = async (id: string, dispatch: any) => {
-  dispatch(loading());
+  dispatch(loadingSingleOrder());
   try {
     const result = await axios.get(`${base_url}orders/one-order/${id}`);
 
     console.log(result);
 
     if (result.data.orderRetreived) {
-      dispatch(success());
+      console.log("Its successfull");
+      
+      dispatch(singleOrderSuccess());
     } else {
-      dispatch(error());
+      console.log("It has failed");
+      dispatch(singleOrderError());
     }
-    return result.data
+    return result.data;
   } catch (err) {
-    dispatch(error());
+    dispatch(singleOrderError());
 
     console.log(error);
-    return {orderRetreived: false}
+    return { orderRetreived: false };
   }
 };
-
-
-

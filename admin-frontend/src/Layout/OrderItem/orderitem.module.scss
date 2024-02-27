@@ -82,16 +82,28 @@
        left: 100%;
     
     }
+
+    .loadingItem{
+     
+    
+      height: 90%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 80vw;
+}
+    
     
     .loader {
-       width: 55px;
-       height: 55px;
-       border: 5px dotted #e4e3e3;
-       border-radius: 50%;
-      // display: inline-block;
-       position: relative;
-       box-sizing: border-box;
-       animation: rotation 1s linear infinite;
+      width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: #FF3D00;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
      }
     
      @keyframes rotation {
@@ -223,7 +235,17 @@
       padding: 10px;
   
   }
+
+
+  .totalAmount{
+    margin-top: 20px;
+
+  }
   
+
+  .status{
+    margin-top: 10px;
+  }
   
   
   
@@ -256,6 +278,17 @@
       
       
          }
+
+         .totalAmount{
+          margin-top: 20px;
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+
+          margin-right: 23%;
+      
+        }
+        
       
     
     

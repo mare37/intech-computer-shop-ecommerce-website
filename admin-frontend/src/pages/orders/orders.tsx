@@ -11,7 +11,8 @@ import ConnectionError from "../../Layout/ConnectionError/connectionerror";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { setPopUpToTrue, setId } from "../../redux/popupSlice";
 import { resetSetDeleteAction } from "../../redux/deleteActionSlice";
-import { setorderItemToTrue, setOrderId } from "../../redux/orderItemSlice";
+import { setorderItemToTrue,setOrderItemToFalse, setOrderId } from "../../redux/orderItemSlice";
+import { resetSingleOrder } from "../../redux/ordersSlice";
 
 import { getAllOrders, getOrdersWithoutLoading } from "../../api/orders";
 
@@ -95,11 +96,16 @@ function Orders() {
 
   const dispatch = useAppDispatch();
 
-  const { isLoading, isSuccess } = useAppSelector((state) => state.order);
+  const { isLoading, isSuccess,singleOrderError } = useAppSelector((state) => state.order);
   const { deleteAction } = useAppSelector((state) => state.deleteAction);
 
   const notifyError = () =>
     toast.error("Failed to load orders! Something is wrong!", {
+      autoClose: false,
+    });
+
+    const notifySingleOrderLoadError = () =>
+    toast.error("Failed to load order! Something is wrong!", {
       autoClose: false,
     });
 
@@ -140,6 +146,17 @@ function Orders() {
     });
   }, [isSuccess]);
 
+  useEffect(()=>{
+    if(singleOrderError){
+      dispatch(setOrderItemToFalse())
+      dispatch(resetSingleOrder())
+
+      //unable to load single order
+      notifySingleOrderLoadError()
+    }
+
+  },[singleOrderError])
+
   useEffect(() => {
     if (deleteAction === true) {
       getAllOrders(dispatch).then((response) => {
@@ -176,7 +193,7 @@ function Orders() {
 
   return (
     <div>
-      {online === true || online === false ?(
+      {online === true ?(
         isLoading ? (
           <Loading />
         ) : (
