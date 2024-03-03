@@ -83,7 +83,7 @@ const StatusCell = ({ getValue, row, column, table, rowInfo }: any) => {
                       }
                     })
                     .finally(() => {
-                   //   dispatch(reset());
+                      dispatch(reset());
                     });
                 }}
               >

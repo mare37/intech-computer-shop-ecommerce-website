@@ -19,6 +19,8 @@ interface orderStatus {
   colour: string;
 }
 
+
+
 export const getAllOrders = async (dispatch: any) => {
   const setReset = () => {
     dispatch(reset());
@@ -36,20 +38,27 @@ export const getAllOrders = async (dispatch: any) => {
       dispatch(error());
     }
     return result.data;
-  } catch (error) {
-    console.log(error);
-
-    dispatch(reset());
+  } catch (err) {
+    console.log(err);
+    dispatch(error());
+   dispatch(reset());
     return { ordersRetrieved: false };
   }
 };
 
+
+
+
 export const getOrdersWithoutLoading = async (dispatch: any) => {
+  
+  
+
   try {
     const result = await axios.get(`${base_url}orders`);
 
     console.log(result.data);
     if (result.data.ordersRetrieved) {
+      
     } else {
       dispatch(error());
     }
@@ -62,9 +71,11 @@ export const getOrdersWithoutLoading = async (dispatch: any) => {
   }
 };
 
+
+
 export const updateOrderStatus = async (
   id: string,
-  orderStatus: orderStatus,
+  orderStatus:orderStatus,
   dispatch: any
 ) => {
   const setReset = () => {
@@ -78,6 +89,7 @@ export const updateOrderStatus = async (
       orderStatus: orderStatus,
     });
 
+   
     if (result.data.orderStatusUpdated) {
       console.log(result.data);
 
@@ -94,6 +106,8 @@ export const updateOrderStatus = async (
     return { orderStatusUpdated: false };
   }
 };
+
+
 
 export const removeOrder = async (id: string, dispatch: any) => {
   dispatch(loading());
@@ -131,11 +145,14 @@ export const getOneOrder = async (id: string, dispatch: any) => {
       console.log("It has failed");
       dispatch(singleOrderError());
     }
-    return result.data;
+    return result.data
   } catch (err) {
     dispatch(singleOrderError());
 
     console.log(error);
-    return { orderRetreived: false };
+    return {orderRetreived: false}
   }
 };
+
+
+
