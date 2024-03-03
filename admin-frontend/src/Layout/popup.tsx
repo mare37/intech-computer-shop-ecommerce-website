@@ -30,10 +30,10 @@ function Popup() {
       dispatch(setPopUpToFalse());
 
       deleteBrand(id, dispatch).then((response) => {
-        if( response.brandDeleted){
+        if (response.brandDeleted) {
           dispatch(setDeleteActionToTrue());
-        }else{
-          dispatch(setDeleteActionToFalse())
+        } else {
+          dispatch(setDeleteActionToFalse());
         }
       });
     }
@@ -42,19 +42,13 @@ function Popup() {
       dispatch(setPopUpToFalse());
 
       deleteColour(id, dispatch).then((response) => {
-
         console.log(response);
-        
-     
 
-        if( response.colourDeleted){
+        if (response.colourDeleted) {
           dispatch(setDeleteActionToTrue());
-        }else{
-          dispatch(setDeleteActionToFalse())
+        } else {
+          dispatch(setDeleteActionToFalse());
         }
-
-
-
       });
     }
 
@@ -77,14 +71,11 @@ function Popup() {
       deleteProduct(id, dispatch).then((response) => {
         console.log(response);
 
-
-        if( response.productDeleted){
+        if (response.productDeleted) {
           dispatch(setDeleteActionToTrue());
-        }else{
-          dispatch(setDeleteActionToFalse())
+        } else {
+          dispatch(setDeleteActionToFalse());
         }
-
-       
       });
     }
 
@@ -93,33 +84,29 @@ function Popup() {
 
       deleteBlogCategory(id, dispatch).then((response) => {
         console.log(response);
-        if( response.blogCatDeleted){
+        if (response.blogCatDeleted) {
           dispatch(setDeleteActionToTrue());
-        }else{
-          dispatch(setDeleteActionToFalse())
+        } else {
+          dispatch(setDeleteActionToFalse());
         }
-
-        
-      })
+      });
     }
 
     if (window.location.pathname === "/admin/bloglist") {
       dispatch(setPopUpToFalse());
 
       deleteBlog(id, dispatch).then((response) => {
-
         console.log(response);
 
-        if( response.blogDeleted){
+        if (response.blogDeleted) {
           dispatch(setDeleteActionToTrue());
-        }else{
+        } else {
           console.log("Toggle delete action");
-          
-          dispatch(setDeleteActionToFalse())
-        }
-        
 
-      //  dispatch(setDeleteActionToTrue());
+          dispatch(setDeleteActionToFalse());
+        }
+
+        //  dispatch(setDeleteActionToTrue());
       });
     }
 
@@ -133,18 +120,21 @@ function Popup() {
       });
     }
 
-    if (window.location.pathname === "/admin/orders") {
+    if (
+      window.location.pathname === "/admin/orders" ||
+      window.location.pathname === "/admin/dashboard"
+    ) {
       dispatch(setPopUpToFalse());
 
       removeOrder(id, dispatch).then((response) => {
         console.log(id);
 
-        if( response.orderRemoved){
+        if (response.orderRemoved) {
           dispatch(setDeleteActionToTrue());
-        }else{
+        } else {
           console.log("Toggle delete action");
-          
-          dispatch(setDeleteActionToFalse())
+
+          dispatch(setDeleteActionToFalse());
         }
       });
     }

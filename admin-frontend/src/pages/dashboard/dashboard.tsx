@@ -1,3 +1,10 @@
+import { useEffect } from "react";
+import { useAppDispatch,useAppSelector } from "../../hooks";
+
+import { setOrderItemToFalse } from "../../redux/orderItemSlice";
+import { resetSingleOrder } from "../../redux/ordersSlice";
+import { ToastContainer, toast } from "react-toastify";
+
 import {
   Chart as ChartJS,
   ChartData,
@@ -60,6 +67,16 @@ function isQuillEmpty(value: string) {
 }
 
 function Dashboard() {
+  const dispatch = useAppDispatch()
+
+
+  const {singleOrderError} = useAppSelector((state)=> state.order)
+
+  const notifySingleOrderLoadError = () =>
+  toast.error("Failed to load order! Something is wrong!", {
+    autoClose: false,
+  });
+
   ChartJS
     .register(
       BarElement
@@ -79,8 +96,21 @@ function Dashboard() {
     ],
   };
 
+
+  useEffect(()=>{
+    if(singleOrderError){
+      dispatch(setOrderItemToFalse())
+      dispatch(resetSingleOrder())
+
+      //unable to load single order
+      notifySingleOrderLoadError()
+    }
+
+  },[singleOrderError])
+
   return (
     <div className={styles.dashboard}>
+      <ToastContainer theme="light"   position="top-center"/>
       <div className={styles.dashboardContainer}>
         <section className={styles.firstSection}>
           <div className={styles.firstSectionDiv}    >
