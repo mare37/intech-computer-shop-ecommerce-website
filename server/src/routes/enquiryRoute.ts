@@ -12,11 +12,11 @@ import {
   getOneEnquiry
 } from "../controllers/enquiryController";
 
-router.post("/", validateToken, isAdmin, createEnquiry);
-router.delete("/:id", validateToken, isAdmin, deleteEnquiry);
-router.put("/:id", validateToken, isAdmin, updateEnquiry);
-router.get("/", validateToken, isAdmin, getAllEnquirys);
-router.get("/:id", validateToken, isAdmin, getOneEnquiry);
+router.post("/", createEnquiry);
+router.delete("/:id",  deleteEnquiry);
+router.put("/:id",  updateEnquiry);
+router.get("/", getAllEnquirys);
+router.get("/:id",  getOneEnquiry);
 
 
 export default router;
