@@ -37,9 +37,9 @@ export const getOneEnquiry = async (req: Request, res: Response) => {
 
   try {
     const result = await enquiryModel.findById({ _id: id });
-    res.send({ result: result });
+    res.send({enquiryRetrieved: true, result: result });
   } catch (error) {
-    res.send({ error: error });
+    res.send({enquiryRetrieved: false, error: error });
   }
 };
 
@@ -48,9 +48,9 @@ export const getAllEnquirys = async (req: Request, res: Response) => {
 
   try {
     const result = await enquiryModel.find({status:"Active"});
-    res.send({ result: result });
-  } catch (error) {
-    res.send({ error: error });
+    res.send({enquiriesRetrieved:true, result: result });
+  } catch (error) { 
+    res.send({enquiriesRetrieved:false, error: error });
   }
 };
 
