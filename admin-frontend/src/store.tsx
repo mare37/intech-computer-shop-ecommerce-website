@@ -12,6 +12,9 @@ import orderReducer from "./redux/ordersSlice"
 import deleteActionReducer from "./redux/deleteActionSlice"
 import spinnerReducer from "./redux/spinnerSlice"
 import orderItemReducer from './redux/orderItemSlice'
+import enquiryReducer from './redux/enquirySlice'
+import displayEquiryReducer from "./redux/displayEnquirySlice"
+import oneMessageReducer from "./redux/oneMessageSlice"
 
 
 
@@ -31,7 +34,10 @@ export const store = configureStore({
         coupon: couponReducer,
         order: orderReducer,
         spinner: spinnerReducer,
-        orderItem: orderItemReducer
+        orderItem: orderItemReducer,
+        enquiry: enquiryReducer,
+        displayEquiry: displayEquiryReducer,
+        oneMessage: oneMessageReducer
      
     }
   })
