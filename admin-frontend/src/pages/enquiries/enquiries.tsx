@@ -1,11 +1,17 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import styles from "./enquiries.module.scss";
-import tableStyles from "../table.module.scss"
+import tableStyles from "../table.module.scss";
 import isOnline from "is-online";
 import { ToastContainer, toast } from "react-toastify";
-import { useAppDispatch,useAppSelector } from "../../hooks";
-import { setDisplayEnquiryToTrue, setEquiryId } from "../../redux/displayEnquirySlice";
-import { setPopUpToTrue,setId } from "../../redux/popupSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import {
+  setDisplayEnquiryToTrue,
+  setEquiryId,
+} from "../../redux/displayEnquirySlice";
+import { setPopUpToTrue, setId } from "../../redux/popupSlice";
+import { resetSetDeleteAction } from "../../redux/deleteActionSlice";
+import { setDisplayEnquiryToFalse } from "../../redux/displayEnquirySlice";
+import { resetOneMessage } from "../../redux/oneMessageSlice";
 
 import Loading from "../../Layout/Loading/loading";
 import ConnectionError from "../../Layout/ConnectionError/connectionerror";
@@ -19,7 +25,10 @@ import {
 } from "@tanstack/react-table";
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { getAllEnquiries } from "../../api/enquiry";
+import {
+  getAllEnquiries,
+  getAllEnquiriesWithoutLoading,
+} from "../../api/enquiry";
 
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { BiEditAlt } from "react-icons/bi";
@@ -45,19 +54,16 @@ import { IoFileTrayOutline } from "react-icons/io5";
  
 ];*/
 
-type  Enquiry = {
+type Enquiry = {
   _id: number;
   sNo: number;
-  name:string
+  name: string;
   email: string;
-  mobile:string,
-  enquiryStatus:string
-
+  mobile: string;
+  enquiryStatus: string;
 };
 
 const columnHelper = createColumnHelper<Enquiry>();
-
-
 
 const columns = [
   columnHelper.accessor("name", {
@@ -85,7 +91,7 @@ function Enquiries() {
   const [online, setOnline] = useState<boolean>();
   const [showError, setShowError] = useState<boolean>();
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const table = useReactTable({
     data,
@@ -94,12 +100,16 @@ function Enquiries() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  const { isLoading, isSuccess } = useAppSelector((state) => state.enquiry);
+  const { deleteAction } = useAppSelector((state) => state.deleteAction);
+  const { isError } = useAppSelector((state) => state.oneMessage);
 
-  const {isLoading} = useAppSelector((state)=> state.enquiry)
-
-  const notifyLoadError = () => toast.error("Failed to load! Something is wrong! ", {autoClose:false, });
-
-
+  const notifyLoadError = () =>
+    toast.error("Failed to load! Something is wrong! ", { autoClose: false });
+  const notify = () => toast.success("Deleted Successfully!");
+  const notifyError = () => toast.error("Failed to delete!");
+  const notifyEnquiryloadError = () =>
+    toast.error("Failed to load Enquiry!", { autoClose: false });
 
   useEffect(() => {
     isOnline()
@@ -111,25 +121,75 @@ function Enquiries() {
         console.log(error);
       });
 
-      getAllEnquiries(dispatch)
+    getAllEnquiries(dispatch)
       .then((response) => {
         console.log(response);
         console.log("triggered");
-        if(response.enquiriesRetrieved){
+        if (response.enquiriesRetrieved) {
           setData(response.result.reverse());
-        }else{
-          notifyLoadError()
+        } else {
+          notifyLoadError();
         }
-
-        
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
+  useEffect(() => {
+    getAllEnquiriesWithoutLoading(dispatch)
+      .then((response) => {
+        console.log(response);
+        console.log("triggered");
+        if (response.enquiriesRetrieved) {
+          setData(response.result.reverse());
+        } else {
+          notifyLoadError();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [isSuccess]);
 
+  useEffect(() => {
+    if (deleteAction === true) {
+      getAllEnquiries(dispatch)
+        .then((response) => {
+          //console.log(response.result);
 
+          setData(response.result.reverse());
+          notify();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+    if (deleteAction === false) {
+      notifyError();
+    }
+
+    dispatch(resetSetDeleteAction());
+  }, [deleteAction]);
+
+  // Hide error component when page loads and internet connection exists
+  useEffect(() => {
+    const timer = setTimeout(() => setShowError(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (isError) {
+      console.log(isError);
+
+      dispatch(setDisplayEnquiryToFalse());
+      dispatch(resetOneMessage());
+
+      //unable to load one message
+      notifyEnquiryloadError();
+    }
+  }, [isError]);
 
   console.log(table.getRowModel().rows);
 
@@ -140,31 +200,34 @@ function Enquiries() {
           <Loading />
         ) : (
           <div className={styles.enquiries}>
-          <div className={styles.enquiriesContainer}>
+            <ToastContainer theme="light" position="top-center" />
+            <div className={styles.enquiriesContainer}>
+              <div className={tableStyles.table}>
+                <h1 className={tableStyles.heading}>Enquiries</h1>
+                <section className={tableStyles.boxShadow}>
+                  {table.getHeaderGroups().map((headerGroup) => {
+                    return (
+                      <div
+                        key={headerGroup.id}
+                        className={tableStyles.headerContainer}
+                      >
+                        {headerGroup.headers.map((header) => {
+                          return (
+                            <div key={header.id} className={tableStyles.header}>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </div>
+                          );
+                        })}
+                        <div className={tableStyles.header}>Action</div>
+                      </div>
+                    );
+                  })}
+                </section>
 
-            <div className={tableStyles.table}>
-              <h1     className={tableStyles.heading}      >Enquiries</h1>
-              <section   className={tableStyles.boxShadow}        >
-                {table.getHeaderGroups().map((headerGroup) => {
-                  return (
-                    <div key={headerGroup.id} className={tableStyles.headerContainer}>
-                      {headerGroup.headers.map((header) => {
-                        return (
-                          <div key={header.id} className={tableStyles.header}>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </div>
-                        );
-                      })}
-                      <div className={tableStyles.header}>Action</div>
-                    </div>
-                  );
-                })}
-              </section>
-
-              {data.length === 0 ? (
+                {data.length === 0 ? (
                   <div className={tableStyles.noData}>
                     {" "}
                     <IoFileTrayOutline
@@ -173,121 +236,96 @@ function Enquiries() {
                     <p>No data</p>{" "}
                   </div>
                 ) : (
-                  <section  className={tableStyles.boxShadow} >
-                  {table.getRowModel().rows.map((row) => (
-                    <div className={styles.dataContainer} key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <div className={styles.data} key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  <section className={tableStyles.boxShadow}>
+                    {table.getRowModel().rows.map((row) => (
+                      <div className={styles.dataContainer} key={row.id}>
+                        {row.getVisibleCells().map((cell) => {
+                          console.log(cell);
+
+                          if (row.original.enquiryStatus === "Unread") {
+                            return (
+                              <div className={styles.data} key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </div>
+                            );
+                          }
+
+                          if (row.original.enquiryStatus === "Read") {
+                            return (
+                              <div
+                                style={{ color: "gray" }}
+                                className={styles.data}
+                                key={cell.id}
+                              >
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </div>
+                            );
+                          }
+                        })}
+                        <div className={tableStyles.data}>
+                          <IoIosOpen
+                            className={tableStyles.open}
+                            size={30}
+                            onClick={() => {
+                              dispatch(setDisplayEnquiryToTrue());
+                              dispatch(setEquiryId({ id: row.original._id }));
+                              // setDeleteButton(true)
+                            }}
+                          />
+                          <BiSolidTrashAlt
+                            className={tableStyles.trash}
+                            size={30}
+                            onClick={() => {
+                              dispatch(setPopUpToTrue());
+                              dispatch(setId({ id: row.original._id }));
+                              // setDeleteButton(true)
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                          />
                         </div>
-                      ))}
-                      <div className={tableStyles.data}>
-                        <IoIosOpen className={tableStyles.open} size={30}     onClick={() => {
-                                dispatch(setDisplayEnquiryToTrue());
-                                dispatch(setEquiryId({ id: row.original._id })); 
-                                // setDeleteButton(true)
-                              }}        />
-                        <BiSolidTrashAlt className={tableStyles.trash} size={30}
-                         onClick={() => {
-                          dispatch(setPopUpToTrue());
-                          dispatch(setId({ id: row.original._id }));
-                          // setDeleteButton(true)
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        />
                       </div>
-                    </div>
-                  ))}
-                </section>
+                    ))}
+                  </section>
                 )}
 
+                <br />
 
-
-
-
-
-
-
-
-
-
-
-
-    
-             
-              <br />
-    
-              <section>
-                Page {table.getState().pagination.pageIndex + 1} of{" "}
-                {table.getPageCount()}
-              </section>
-              <br />
-              <div className={tableStyles.navigatepages}>
-                <button
-                  onClick={() => table.previousPage()}
-                  disabled={!table.getCanPreviousPage()}
-                >
-                  {"<"}
-                </button>
-                <button
-                  onClick={() => table.nextPage()}
-                  disabled={!table.getCanNextPage()}
-                >
-                  {">"}
-                </button>
+                <section>
+                  Page {table.getState().pagination.pageIndex + 1} of{" "}
+                  {table.getPageCount()}
+                </section>
+                <br />
+                <div className={tableStyles.navigatepages}>
+                  <button
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                  >
+                    {"<"}
+                  </button>
+                  <button
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                  >
+                    {">"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
         )
+      ) : showError ? (
+        <ConnectionError />
       ) : (
-          showError ? <ConnectionError />: ""
+        ""
       )}
     </div>
   );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
-export default Enquiries
+export default Enquiries;

@@ -13,7 +13,8 @@ import { deleteBlogCategory } from "../api/blogcategory";
 import { deleteBlog } from "../api/blog";
 import { removeCoupon } from "../api/coupon";
 import { removeOrder } from "../api/orders";
-import { useState } from "react";
+import{deleteEnquiry }from "../api/enquiry"
+
 
 function Popup() {
   const dispatch = useAppDispatch();
@@ -138,6 +139,27 @@ function Popup() {
         }
       });
     }
+
+
+    if (window.location.pathname === "/admin/enquiries") {
+      dispatch(setPopUpToFalse());
+
+      deleteEnquiry(id, dispatch).then((response) => {
+        console.log(response);
+
+        if (response.enquiryDeleted) {
+          dispatch(setDeleteActionToTrue());
+        } else {
+          dispatch(setDeleteActionToFalse());
+        }
+      });
+    }
+
+
+
+
+
+
   };
 
   // console.log(popup);
