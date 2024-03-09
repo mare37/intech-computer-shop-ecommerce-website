@@ -10,7 +10,7 @@
 
 .enquiriesContainer{
     height: 100%;
-   
+    overflow-x: scroll;
 
 
     form{
@@ -52,7 +52,6 @@
    
     padding: 20px;
     display: flex;
-    flex-direction: column;
     background-color:white;
 
     margin-bottom: 1px;
@@ -65,6 +64,7 @@
     display: inline-block;
     width: 33.333%;
     margin-top: 10px;
+    margin-left: 10px;
 
 }
 
