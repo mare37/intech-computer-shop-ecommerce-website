@@ -57,12 +57,12 @@ export const getAllEnquirys = async (req: Request, res: Response) => {
 export const updateEnquiry = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const { name, email, mobile, comment } = req.body;
+  const { enquiryStatus } = req.body;
 
   try {
     const result = await enquiryModel.findByIdAndUpdate(
       { _id: id },
-      { name: name, email:email, mobile:mobile, comment:comment },
+      { enquiryStatus: enquiryStatus},
       { new: true }
     );
     res.send({enquiryUpdated: true, result: result });
