@@ -12,6 +12,7 @@ import {
   getAllInactiveUsers,
   getOneuser,
   deleteOneuser,
+  reactivateOneuser,
   updateUser,
   refresh,
   logOut,
@@ -56,6 +57,7 @@ router.get("/getallinactiveusers", validateToken, getAllInactiveUsers);
 router.get("/getoneuser/:id", getOneuser);
 router.delete("/getoneuser/:id", deleteOneuser);
 router.put("/updateuser/:id", updateUser);
+router.put("/reactivateuser/:id", reactivateOneuser);
 router.get("/refresh", refresh);
 router.get("/logout", validateToken, logOut);
 router.post("/cart", useCart);

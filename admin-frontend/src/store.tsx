@@ -15,6 +15,7 @@ import orderItemReducer from './redux/orderItemSlice'
 import enquiryReducer from './redux/enquirySlice'
 import displayEquiryReducer from "./redux/displayEnquirySlice"
 import oneMessageReducer from "./redux/oneMessageSlice"
+import userReducer from "./redux/userSlice"
 
 
 
@@ -37,7 +38,8 @@ export const store = configureStore({
         orderItem: orderItemReducer,
         enquiry: enquiryReducer,
         displayEquiry: displayEquiryReducer,
-        oneMessage: oneMessageReducer
+        oneMessage: oneMessageReducer,
+        user: userReducer
      
     }
   })
