@@ -524,9 +524,15 @@ export const resetPassword = async (req: Request, res: Response) => {
 
 export const getAllActiveUsers = async (req: Request, res: Response) => {
   try {
-    const AllUsers = await userModel.find({ status: "Active" });
+    const AllUsers =  userModel.find();
 
-    res.send(JSON.stringify(AllUsers));
+   // res.send(JSON.stringify(AllUsers));
+
+   const  query = AllUsers.select("firstName lastName email mobile role status createdAt"); 
+
+   const Users = await query
+
+   res.send({usersRetrieved: true, result: Users }) 
   } catch (err) {
     console.log(err);
   }
@@ -569,9 +575,27 @@ export const deleteOneuser = async (req: Request, res: Response) => {
       { status: "Inactive" }
     );
 
-    res.send(JSON.stringify(result));
+    res.send({ userUpdated: true, result: result });
   } catch (err) {
-    console.log(err);
+    res.send({ userUpdated: false, err: err });
+  }
+};
+
+
+export const reactivateOneuser = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  console.log(id);
+
+  try {
+    const result = await userModel.findByIdAndUpdate(
+      { _id: id },
+      { status: "Active" }
+    );
+
+    res.send({ userUpdated: true, result: result });
+  } catch (err) {
+    res.send({ userUpdated: false, err: err });
   }
 };
 
